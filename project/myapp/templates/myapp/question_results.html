@@ -1,0 +1,15 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Poll Results{% endblock %}
+
+{% block content %}
+  <h1>{{ question.question_text }}</h1>
+
+  <ul>
+  {% for choice in question.choice_set.all %}
+      <li>{{ choice.choice_text }} -- {{ choice.votes }} votes</li>
+  {% endfor %}
+  </ul>
+
+  <a href="{% url 'myapp:question_detail' question.id %}">Vote again?</a>
+{% endblock %}

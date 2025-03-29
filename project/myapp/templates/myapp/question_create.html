@@ -1,0 +1,12 @@
+{% extends 'myapp/base.html' %}
+
+
+{% block title %}Create a new Question{% endblock %}
+
+{% block content %}
+    <form action="{% url 'myapp:question_create' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}

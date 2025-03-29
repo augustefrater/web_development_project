@@ -1,0 +1,8 @@
+body {
+    background-color: lightblue;
+    color: darkslategrey;
+}
+
+li.navitem {
+    display: inline;
+}

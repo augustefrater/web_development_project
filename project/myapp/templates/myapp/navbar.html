@@ -1,0 +1,15 @@
+<nav>
+    <ul>
+        <li class="navitem"><a href="{% url 'myapp:index' %}">Home</a></li>
+        <li class="navitem"><a href="{% url 'myapp:question_list' %}">Questions</a></li>
+        <li class="navitem"><a href="{% url 'myapp:question_create' %}">New Question</a></li>
+        {% comment %}
+          {% if user.is_authenticated %}
+              <li class="navitem"><a href="{% url 'myapp:profile' %}">My Profile</a></li>
+              <li class="navitem"><a href="{% url 'myapp:logout' %}">Logout</a></li>
+          {% else %}
+              <li class="navitem"><a href="{% url 'myapp:login' %}">Login</a></li>
+          {% endif %}
+        {% endcomment %}
+    </ul>
+</nav>

@@ -1,0 +1,18 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Available Polls{% endblock %}
+
+{% block content %}
+  {% if latest_question_list %}
+      <ul>
+        {% for question in latest_question_list %}
+          <li>
+            <a href="{% url 'myapp:question_detail' question.id %}">{{ question.question_text }}</a>
+            (<a href="{% url 'myapp:question_results' question.id %}">Results</a>)
+          </li>
+        {% endfor %}
+      </ul>
+  {% else %}
+      <p>No polls are available.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>myapp | {% block title %}{% endblock %}</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HTML5 Example Page">
+
+  <link href={% static "myapp/style.css" %} rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    {% include "myapp/navbar.html" %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="content">
+        {% block content %}(no content){% endblock %}
+    </div>
+
+</body>
