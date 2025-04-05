@@ -1,23 +1,5 @@
 from django.db import models
 
-
-class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField("date published")
-
-    def __str__(self):
-        return self.question_text
-
-
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.choice_text
-
-
 class User(models.Model):
     # Unique user ID, auto-incrementing primary key
     id = models.AutoField(primary_key=True)
@@ -41,7 +23,6 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
-
 
 
 class Machine(models.Model):
@@ -68,7 +49,6 @@ class Machine(models.Model):
         return f'{self.name} ({self.machine_id})'
 
 
-
 class Warning(models.Model):
     # Unique warning ID, auto-incrementing primary key
     id = models.AutoField(primary_key=True)
@@ -90,7 +70,6 @@ class Warning(models.Model):
 
     def __str__(self):
         return f"Warning {self.id} for {self.machine_id}"
-
 
 
 class FaultCase(models.Model):
@@ -120,7 +99,6 @@ class FaultCase(models.Model):
         return f"Fault {self.id} for {self.machine_id}"
 
 
-
 class FaultNote(models.Model):
     # Unique note ID, auto-incrementing primary key
     id = models.AutoField(primary_key=True)
@@ -142,7 +120,6 @@ class FaultNote(models.Model):
 
     def __str__(self):
         return f"Note {self.id} for Fault {self.fault_case_id}"
-
 
 
 class FaultNoteImage(models.Model):
@@ -168,7 +145,6 @@ class FaultNoteImage(models.Model):
         return f"Image {self.id} for Note {self.fault_note_id}"
 
 
-
 class FaultComment(models.Model):
     # Unique comment ID, auto-incrementing primary key
     id = models.AutoField(primary_key=True)
@@ -190,7 +166,6 @@ class FaultComment(models.Model):
 
     def __str__(self):
         return f"Comment {self.id} for Fault {self.fault_case_id}"
-
 
 
 class MachineAssignment(models.Model):
