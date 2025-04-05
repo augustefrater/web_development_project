@@ -1,13 +1,17 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import UserViewSet, MachineViewSet, WarningViewSet, FaultCaseViewSet, FaultNoteViewSet, FaultNoteImageViewSet, FaultCommentViewSet, MachineAssignmentViewSet
 
-from . import views
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'machines', MachineViewSet)
+router.register(r'warnings', WarningViewSet)
+router.register(r'fault-cases', FaultCaseViewSet)
+router.register(r'fault-notes', FaultNoteViewSet)
+router.register(r'fault-note-images', FaultNoteImageViewSet)
+router.register(r'fault-comments', FaultCommentViewSet)
+router.register(r'machine-assignments', MachineAssignmentViewSet)
 
-app_name = "myapp"
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("questions/", views.question_list, name="question_list"),
-    path("questions/<int:question_id>/", views.question_detail, name="question_detail"),
-    path("questions/<int:question_id>/results/", views.question_results, name="question_results"),
-    path("questions/<int:question_id>/vote/", views.question_vote, name="question_vote"),
-    path("question_create/", views.question_create, name="question_create"),
+    path('api/', include(router.urls)),
 ]
