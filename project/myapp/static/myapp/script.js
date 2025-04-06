@@ -1,83 +1,195 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const header = document.getElementById('main-header');
-    const menuToggle = document.getElementById('menu-toggle');
-    let lastScrollTop = 0;
-
-    window.addEventListener('scroll', function() {
-        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollTop > lastScrollTop) {
-            // Downscroll code
-            header.style.top = '-100px';  // Hide header
-            menuToggle.classList.remove('hidden');
-            menuToggle.classList.add('shown');
-        } else {
-            // Upscroll code
-            header.style.top = '0';
-            menuToggle.classList.remove('shown');
-            menuToggle.classList.add('hidden');
-        }
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
-    }, false);
-
-    menuToggle.addEventListener('click', function() {
-        // Toggle menu visibility
-        if (header.style.top === '-100px') {
-            header.style.top = '0';
-            this.classList.remove('shown');
-            this.classList.add('hidden');
-        } else {
-            header.style.top = '-100px';
-            this.classList.remove('hidden');
-            this.classList.add('shown');
-        }
-    });
-});
+// main.js
 document.addEventListener('DOMContentLoaded', () => {
-    displayRecentlyViewed();
+    // Fetch machine statuses for dashboard
+    fetchMachineStatuses();
+
+    // Setup form event listeners
+    setupForms();
+
+    // Initialize Chart.js for visualization (if Manager dashboard)
+    if (document.getElementById('statusChart')) {
+        initStatusChart();
+    }
 });
 
-function viewBook(title, link, image) {
-    const book = { title, link, image };
-    let viewedBooks = JSON.parse(localStorage.getItem('recentBooks')) || [];
-
-    // Remove duplicate entries
-    viewedBooks = viewedBooks.filter(b => b.title !== title);
-
-    // Add the new book to the start
-    viewedBooks.unshift(book);
-
-    // Limit to 5 recent books
-    viewedBooks = viewedBooks.slice(0, 5);
-
-    // Save to localStorage
-    localStorage.setItem('recentBooks', JSON.stringify(viewedBooks));
-
-    // Redirect to book page
-    window.location.href = link;
+// Fetch machine statuses via AJAX
+function fetchMachineStatuses() {
+    fetch('/api/machines/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()  // For Django CSRF protection
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    })
+    .then(data => {
+        const machineList = document.getElementById('machine-list');
+        if (machineList) {
+            machineList.innerHTML = ''; // Clear existing content
+            data.forEach(machine => {
+                const statusClass = getStatusClass(machine.status);
+                const item = document.createElement('div');
+                item.className = `machine-item ${statusClass}`;
+                item.innerHTML = `
+                    <h3>${machine.name}</h3>
+                    <p>Status: <span class="${statusClass}">${machine.status}</span></p>
+                    <p>Assigned: ${machine.assigned_users.join(', ')}</p>
+                    <button onclick="viewMachineDetails(${machine.id})">View Details</button>
+                `;
+                machineList.appendChild(item);
+            });
+        }
+    })
+    .catch(error => console.error('Error fetching machines:', error));
 }
 
-function displayRecentlyViewed() {
-    const recentList = document.getElementById('recent-list');
-    const noRecentImage = document.getElementById('no-recent-image');
-    const viewedBooks = JSON.parse(localStorage.getItem('recentBooks')) || [];
+// Status styling
+function getStatusClass(status) {
+    switch (status) {
+        case 'OK': return 'status-ok';
+        case 'Warning': return 'status-warning';
+        case 'Fault': return 'status-fault';
+        default: return '';
+    }
+}
 
-    recentList.innerHTML = '';
+// View machine details (drill-down for Managers)
+function viewMachineDetails(machineId) {
+    window.location.href = `/machines/${machineId}/`; // Navigate to detail page
+}
 
-    if (viewedBooks.length === 0) {
-        noRecentImage.style.display = 'block';
-        return;
-    } else {
-        noRecentImage.style.display = 'none';
+// Form setup for fault/warning submission
+function setupForms() {
+    const faultForm = document.getElementById('fault-form');
+    const warningForm = document.getElementById('warning-form');
+
+    if (faultForm) {
+        faultForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validateFaultForm()) {
+                submitFault();
+            }
+        });
     }
 
-    viewedBooks.forEach(book => {
-        const bookDiv = document.createElement('div');
-        bookDiv.classList.add('slide');
-        bookDiv.innerHTML = `
-            <a href="${book.link}">
-                <img src="${book.image}" alt="${book.title}">
-            </a>
-        `;
-        recentList.appendChild(bookDiv);
-    });
+    if (warningForm) {
+        warningForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validateWarningForm()) {
+                submitWarning();
+            }
+        });
+    }
+}
+
+// Validate fault form
+function validateFaultForm() {
+    const notes = document.getElementById('fault-notes').value;
+    const image = document.getElementById('fault-image').files[0];
+    if (!notes.trim()) {
+        alert('Please provide fault notes.');
+        return false;
+    }
+    return true;
+}
+
+// Validate warning form
+function validateWarningForm() {
+    const warningText = document.getElementById('warning-text').value;
+    if (!warningText.trim()) {
+        alert('Please provide a warning description.');
+        return false;
+    }
+    return true;
+}
+
+// Submit fault via AJAX
+function submitFault() {
+    const formData = new FormData();
+    formData.append('notes', document.getElementById('fault-notes').value);
+    formData.append('image', document.getElementById('fault-image').files[0]);
+    formData.append('machine_id', document.getElementById('machine-id').value);
+
+    fetch('/api/faults/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Fault reported successfully!');
+            fetchMachineStatuses(); // Refresh dashboard
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error submitting fault:', error));
+}
+
+// Submit warning via AJAX
+function submitWarning() {
+    const warningText = document.getElementById('warning-text').value;
+    const machineId = document.getElementById('machine-id').value;
+
+    fetch('/api/warnings/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({ machine_id: machineId, text: warningText })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Warning added successfully!');
+            fetchMachineStatuses();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error submitting warning:', error));
+}
+
+// Get CSRF token from cookie (for Django)
+function getCSRFToken() {
+    const name = 'csrftoken';
+    const cookieValue = document.cookie.split(';')
+        .map(c => c.trim())
+        .find(c => c.startsWith(name + '='))
+        ?.split('=')[1];
+    return cookieValue || '';
+}
+
+// Initialize Chart.js for Manager dashboard
+function initStatusChart() {
+    fetch('/api/machines/summary/', {
+        method: 'GET',
+        headers: { 'X-CSRFToken': getCSRFToken() }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const ctx = document.getElementById('statusChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['OK', 'Warning', 'Fault'],
+                datasets: [{
+                    data: [data.ok, data.warning, data.fault],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } }
+            }
+        });
+    })
+    .catch(error => console.error('Error fetching summary:', error));
 }
