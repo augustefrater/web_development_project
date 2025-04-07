@@ -193,3 +193,26 @@ function initStatusChart() {
     })
     .catch(error => console.error('Error fetching summary:', error));
 }
+
+// minor animations
+function animatePageLoad() {
+    document.body.style.opacity = 0;
+    setTimeout(() => document.body.style.opacity = 1, 100);
+}
+animatePageLoad();
+
+// separate template and JS logic for the page maybe.
+function fetchMachineDetails(machineId) {
+    fetch(`/api/machines/${machineId}/`, {
+        headers: { 'X-CSRFToken': getCSRFToken() }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const details = document.getElementById('machine-details');
+        details.innerHTML = `
+            <h2>${data.name}</h2>
+            <p>Status: <span class="${getStatusClass(data.status)}">${data.status}</span></p>
+            <p>Fault History: ${data.faults.length} cases</p>
+        `;
+    });
+}
