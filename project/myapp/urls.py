@@ -1,5 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.urls import path, include
+from django.conf import settings           # Import settings
+from django.conf.urls.static import static # Import static
 from .views import UserViewSet, MachineViewSet, WarningViewSet, FaultCaseViewSet, FaultNoteViewSet, FaultNoteImageViewSet, FaultCommentViewSet, MachineAssignmentViewSet
 
 router = DefaultRouter()
@@ -15,3 +18,7 @@ router.register(r'machine-assignments', MachineAssignmentViewSet)
 urlpatterns = [
     path('api/', include(router.urls)),
 ]
+
+# Add this snippet to serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

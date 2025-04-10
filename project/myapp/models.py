@@ -195,25 +195,21 @@ class FaultNoteImage(models.Model):
     Corresponds to 'fault_note_images', using ImageField.
     """
     fault_note = models.ForeignKey(
-        FaultNote,
-        on_delete=models.CASCADE, # Images deleted with the note
+        'FaultNote',  # Use string 'FaultNote' if defined later in file, or import
+        on_delete=models.CASCADE,
         related_name='images'
     )
-    # Uses MEDIA_ROOT setting. Ensure MEDIA_ROOT is configured and uses a Docker Volume!
+    # Django will automatically handle filename conflicts if needed
     image = models.ImageField(
-        upload_to='fault_images/',
+        upload_to='fault_images/%Y/%m/%d/',  # Organizes uploads by year/month/day
+        # Or just: upload_to='fault_images/',
         help_text="Image file related to the fault note."
     )
-    # Optional: Store original filename if needed, ImageField handles storage path
-    # original_filename = models.CharField(max_length=255, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        # self.image.name contains the path relative to MEDIA_ROOT
         return f"Image for Note ID {self.fault_note.id} ({self.image.name})"
-
-    # Optional: Add method to get image URL
-    # def get_image_url(self):
-    #    return self.image.url
 
     class Meta:
         ordering = ['uploaded_at']
