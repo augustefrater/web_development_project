@@ -1,6 +1,9 @@
 from rest_framework import viewsets
-from .models import User, Machine, Warning, FaultCase, FaultNote, FaultNoteImage, FaultComment, MachineAssignment
+from .models import Machine, Warning, FaultCase, FaultNote, FaultNoteImage, FaultComment, MachineAssignment
 from .serializers import UserSerializer, MachineSerializer, WarningSerializer, FaultCaseSerializer, FaultNoteSerializer, FaultNoteImageSerializer, FaultCommentSerializer, MachineAssignmentSerializer
+from django.contrib.auth.models import User
+
+
 
 # ViewSet for User model
 class UserViewSet(viewsets.ModelViewSet):
