@@ -1,196 +1,280 @@
 from django.db import models
+from django.conf import settings # To reference the AUTH_USER_MODEL
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from django.utils import timezone
 
-class User(models.Model):
-    # Unique user ID, auto-incrementing primary key
-    id = models.AutoField(primary_key=True)
+# --- Choices ---
 
-    # Login username, unique and required
-    username = models.CharField(max_length=50, unique=True, null=False)
+STATUS_CHOICES = [
+    ('OK', 'OK'),
+    ('Warning', 'Warning'),
+    ('Fault', 'Fault'),
+]
 
-    # Hashed password, required
-    password_hash = models.CharField(max_length=255, null=False)
+FAULT_STATUS_CHOICES = [
+    ('Open', 'Open'),
+    ('Resolved', 'Resolved'),
+]
 
-    # User role enum, required
-    ROLE_CHOICES = (
-    ('Technician', 'Technician'), ('Repair', 'Repair'), ('Manager', 'Manager'), ('ViewOnly', 'ViewOnly'))
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, null=False)
+ASSIGNMENT_ROLE_CHOICES = [
+    ('Technician', 'Technician'),
+    ('Repair', 'Repair'),
+]
 
-    # Registration timestamp, auto-set to current time
+# --- Models ---
+
+class Collection(models.Model):
+    """
+    User-definable collections for grouping machines (e.g., by location, type).
+    Corresponds to the 'collections' table suggestion.
+    """
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r'^[A-Za-z0-9\-]+$',
+                message='Collection name must contain only letters, numbers, or hyphens.'
+            )
+        ],
+        help_text="Unique name for the collection (e.g., Building-A, Model-53A)."
+    )
+    description = models.TextField(blank=True, null=True, help_text="Optional description for the collection.")
     created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'users'
+    # Optional: Add created_by ForeignKey to User if needed
 
     def __str__(self):
-        return self.username
+        return self.name
+
+    class Meta:
+        ordering = ['name'] # Default ordering
 
 
 class Machine(models.Model):
-    # Machine ID, fixed 12-character primary key
-    machine_id = models.CharField(max_length=12, primary_key=True)
-
-    # Machine name, max 100 characters
-    name = models.CharField(max_length=100)
-
-    # Machine status enum with default 'OK'
-    STATUS_CHOICES = (('OK', 'OK'), ('Warning', 'Warning'), ('Fault', 'Fault'))
-    status = models.CharField(max_length=7, choices=STATUS_CHOICES, default='OK')
-
-    # Importance level between 1-5, default is 1
-    importance_level = models.IntegerField(default=1, choices=[(i, str(i)) for i in range(1, 6)])
-
-    # Creation timestamp, auto-set to current time
+    """
+    Represents a piece of factory machinery.
+    Corresponds to the 'machines' table.
+    """
+    machine_id = models.CharField(
+        max_length=12, # Keep CHAR(12) as CharField for simplicity unless specific needs arise
+        primary_key=True,
+        help_text="Unique 12-character identifier for the machine."
+    )
+    name = models.CharField(max_length=100, help_text="Human-readable name of the machine.")
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='OK',
+        db_index=True, # Index for faster status lookups
+        help_text="Current operational status of the machine."
+    )
+    importance_level = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Importance level (1-5), used for prioritization."
+    )
+    collections = models.ManyToManyField(
+        Collection,
+        related_name='machines',
+        blank=True, # A machine doesn't have to belong to a collection
+        help_text="Collections this machine belongs to."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'machines'
-
     def __str__(self):
-        return f'{self.name} ({self.machine_id})'
+        return f"{self.name} ({self.machine_id})"
+
+    class Meta:
+        ordering = ['-importance_level', 'name'] # Order by importance first, then name
 
 
 class Warning(models.Model):
-    # Unique warning ID, auto-incrementing primary key
-    id = models.AutoField(primary_key=True)
-
-    # Related machine, foreign key to machines table
-    machine_id = models.ForeignKey('Machine', on_delete=models.CASCADE, to_field='machine_id', null=False)
-
-    # Warning description, required
-    warning_text = models.TextField(null=False)
-
-    # User who added the warning, foreign key to users table
-    created_by = models.ForeignKey('User', on_delete=models.CASCADE, to_field='id', null=False)
-
-    # Timestamp, auto-set to current time
+    """
+    Stores active or historical warnings associated with a machine.
+    Corresponds to the 'warnings' table with added 'is_active' status.
+    """
+    machine = models.ForeignKey(
+        Machine,
+        on_delete=models.CASCADE, # If machine is deleted, its warnings are too
+        related_name='warnings'
+    )
+    warning_text = models.TextField(help_text="Description of the warning.")
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT, # Prevent deleting users who created warnings? Or SET_NULL?
+        related_name='warnings_created'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'warnings'
+    is_active = models.BooleanField(
+        default=True,
+        db_index=True, # Index for quickly finding active warnings
+        help_text="Is this warning currently active?"
+    )
+    # Optional: Add 'resolved_by' and 'resolved_at' if needed for tracking who cleared it
 
     def __str__(self):
-        return f"Warning {self.id} for {self.machine_id}"
+        return f"Warning for {self.machine.name} ({'Active' if self.is_active else 'Inactive'}) - {self.warning_text[:50]}..."
+
+    class Meta:
+        ordering = ['-created_at']
 
 
 class FaultCase(models.Model):
-    # Unique fault case ID, auto-incrementing primary key
-    id = models.AutoField(primary_key=True)
-
-    # Faulty machine, foreign key to machines table
-    machine_id = models.ForeignKey('Machine', on_delete=models.CASCADE, to_field='machine_id', null=False)
-
-    # Who created the case, foreign key to users table
-    created_by = models.ForeignKey('User', on_delete=models.CASCADE, to_field='id', null=False)
-
-    # Case status enum with default 'Open'
-    STATUS_CHOICES = (('Open', 'Open'), ('Resolved', 'Resolved'))
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='Open')
-
-    # When it was created, auto-set to current time
+    """
+    Represents a specific fault or breakdown incident for a machine.
+    Corresponds to the 'fault_cases' table.
+    """
+    # Django adds 'id' primary key automatically
+    machine = models.ForeignKey(
+        Machine,
+        on_delete=models.CASCADE, # If machine is deleted, its fault cases are too
+        related_name='fault_cases'
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT, # Prevent deleting users who created cases?
+        related_name='fault_cases_created'
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=FAULT_STATUS_CHOICES,
+        default='Open',
+        db_index=True, # Index for finding open/resolved cases
+        help_text="Current status of the fault case."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-
-    # When it was resolved, nullable
-    resolved_at = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        db_table = 'fault_cases'
+    resolved_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp when the fault case was marked as resolved."
+    )
 
     def __str__(self):
-        return f"Fault {self.id} for {self.machine_id}"
+        return f"Fault Case #{self.id} for {self.machine.name} ({self.status})"
 
+    def resolve(self, user):
+        """Marks the case as resolved."""
+        self.status = 'Resolved'
+        self.resolved_at = timezone.now()
+        # Optionally link the resolving user
+        # self.resolved_by = user
+        self.machine.status = 'OK' # Return machine to OK status
+        self.machine.save()
+        self.save()
+
+    class Meta:
+        ordering = ['-created_at']
 
 class FaultNote(models.Model):
-    # Unique note ID, auto-incrementing primary key
-    id = models.AutoField(primary_key=True)
-
-    # Related fault case, foreign key to fault_cases table
-    fault_case_id = models.ForeignKey('FaultCase', on_delete=models.CASCADE, to_field='id', null=False)
-
-    # Who made the note, foreign key to users table
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, to_field='id', null=False)
-
-    # The note content, required
-    note_text = models.TextField(null=False)
-
-    # When it was written, auto-set to current time
+    """
+    Detailed notes or updates added to a fault case.
+    Corresponds to the 'fault_notes' table.
+    """
+    fault_case = models.ForeignKey(
+        FaultCase,
+        on_delete=models.CASCADE, # Notes deleted with the case
+        related_name='notes'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT, # Keep notes even if user is deleted? Or SET_NULL?
+        related_name='fault_notes_added'
+    )
+    note_text = models.TextField(help_text="Content of the note.")
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'fault_notes'
-
     def __str__(self):
-        return f"Note {self.id} for Fault {self.fault_case_id}"
+        return f"Note on Case #{self.fault_case.id} by {self.user.username} at {self.created_at}"
 
+    class Meta:
+        ordering = ['created_at'] # Show notes chronologically
 
 class FaultNoteImage(models.Model):
-    # Unique image ID, auto-incrementing primary key
-    id = models.AutoField(primary_key=True)
-
-    # Which note this image belongs to, foreign key to fault_notes table
-    fault_note_id = models.ForeignKey('FaultNote', on_delete=models.CASCADE, to_field='id', null=False)
-
-    # The binary image data, required
-    image_data = models.BinaryField(null=False)
-
-    # Original filename, nullable
-    filename = models.CharField(max_length=100, null=True, blank=True)
-
-    # Upload time, auto-set to current time
+    """
+    Images associated with a specific fault note.
+    Corresponds to 'fault_note_images', using ImageField.
+    """
+    fault_note = models.ForeignKey(
+        FaultNote,
+        on_delete=models.CASCADE, # Images deleted with the note
+        related_name='images'
+    )
+    # Uses MEDIA_ROOT setting. Ensure MEDIA_ROOT is configured and uses a Docker Volume!
+    image = models.ImageField(
+        upload_to='fault_images/',
+        help_text="Image file related to the fault note."
+    )
+    # Optional: Store original filename if needed, ImageField handles storage path
+    # original_filename = models.CharField(max_length=255, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'fault_note_images'
-
     def __str__(self):
-        return f"Image {self.id} for Note {self.fault_note_id}"
+        return f"Image for Note ID {self.fault_note.id} ({self.image.name})"
 
+    # Optional: Add method to get image URL
+    # def get_image_url(self):
+    #    return self.image.url
+
+    class Meta:
+        ordering = ['uploaded_at']
 
 class FaultComment(models.Model):
-    # Unique comment ID, auto-incrementing primary key
-    id = models.AutoField(primary_key=True)
-
-    # Which fault case the comment belongs to, foreign key to fault_cases table
-    fault_case_id = models.ForeignKey('FaultCase', on_delete=models.CASCADE, to_field='id', null=False)
-
-    # Who made the comment, foreign key to users table
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, to_field='id', null=False)
-
-    # The comment, required
-    comment_text = models.TextField(null=False)
-
-    # Time of commenting, auto-set to current time
+    """
+    User comments on a fault case (simpler than full notes).
+    Corresponds to 'fault_comments'.
+    """
+    fault_case = models.ForeignKey(
+        FaultCase,
+        on_delete=models.CASCADE, # Comments deleted with the case
+        related_name='comments'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT, # Keep comments? Or SET_NULL?
+        related_name='fault_comments_made'
+    )
+    comment_text = models.TextField(help_text="The comment text.")
     commented_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'fault_comments'
-
     def __str__(self):
-        return f"Comment {self.id} for Fault {self.fault_case_id}"
+        return f"Comment on Case #{self.fault_case.id} by {self.user.username}"
 
+    class Meta:
+        ordering = ['commented_at'] # Show comments chronologically
 
 class MachineAssignment(models.Model):
-    # Unique assignment ID, auto-incrementing primary key
-    id = models.AutoField(primary_key=True)
-
-    # Related machine, foreign key to machines table
-    machine_id = models.ForeignKey('Machine', on_delete=models.CASCADE, to_field='machine_id', null=False)
-
-    # Assigned user, foreign key to users table
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, to_field='id', null=False, related_name='assignments')
-
-    # Role on this machine enum, required
-    ROLE_CHOICES = (('Technician', 'Technician'), ('Repair', 'Repair'))
-    assigned_role = models.CharField(max_length=10, choices=ROLE_CHOICES, null=False)
-
-    # Who made the assignment, foreign key to users table
-    assigned_by = models.ForeignKey('User', on_delete=models.CASCADE, to_field='id', null=False,
-                                    related_name='assigned_tasks')
-
-    # Assignment time, auto-set to current time
+    """
+    Assigns a Technician or Repair user to a specific machine.
+    Corresponds to 'machine_assignments'.
+    """
+    machine = models.ForeignKey(
+        Machine,
+        on_delete=models.CASCADE,
+        related_name='assignments'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, # If user is deleted, remove their assignments
+        related_name='machine_assignments',
+        limit_choices_to={'groups__name__in': ['Technician', 'Repair']}
+    )
+    assigned_role = models.CharField(
+        max_length=10,
+        choices=ASSIGNMENT_ROLE_CHOICES,
+        help_text="Role assigned to the user for this specific machine."
+    )
+    assigned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL, # Keep assignment record even if assigner is deleted
+        null=True,
+        blank=True,
+        related_name='assignments_made'
+    )
     assigned_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'machine_assignments'
-
     def __str__(self):
-        return f"{self.assigned_role} assignment for {self.machine_id} to {self.user_id}"
+        return f"{self.user.username} assigned as {self.assigned_role} to {self.machine.name}"
+
+    class Meta:
+        unique_together = ('machine', 'user') # Prevent assigning same user multiple times to same machine
+        ordering = ['assigned_at']
