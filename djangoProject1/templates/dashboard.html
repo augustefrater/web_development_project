@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户主页</title>
+</head>
+<body>
+<h2>欢迎 {{ user.username }}（{{ user.profile.role }}）</h2>
+
+{% if user.profile.role == "Technician" %}
+  <a href="{% url 'create_fault_case' %}">🛠 上报故障</a>
+{% elif user.profile.role == "Repair" %}
+  <a href="{% url 'repair_dashboard' %}">🔧 查看并维修分配的机器</a>
+{% elif user.profile.role == "Manager" %}
+  <a href="{% url 'add_machine' %}">🛠 添加设备</a><br>
+  <a href="{% url 'export_report' %}">📊 导出报告</a><br>
+{% elif user.profile.role == "View-only" %}
+  <p>👁 只读模式，无可操作功能</p>
+{% endif %}
+{#  <p><a href="{% url 'logout' %}">退出登录</a></p>#}
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">退出登录</button>
+</form>
+
+
+</body>
+</html>

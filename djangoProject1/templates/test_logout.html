@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>登出测试页面</title>
+</head>
+<body>
+  <h2>点击下面按钮测试登出功能</h2>
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">退出登录</button>
+  </form>
+</body>
+</html>

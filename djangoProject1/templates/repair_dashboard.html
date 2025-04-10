@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>维修任务面板</h2>
+
+{% for case in cases %}
+  <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+    <strong>{{ case.title }}</strong><br>
+    <p>{{ case.description }}</p>
+    <p>状态：{{ case.status }}</p>
+    <a href="{% url 'mark_as_resolved' case.id %}">✅ 标记为已解决</a>
+  </div>
+{% empty %}
+  <p>暂无待解决故障</p>
+{% endfor %}
+
+</body>
+</html>

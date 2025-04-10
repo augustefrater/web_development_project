@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>{{ fault_case.title }}</h2>
+<p>{{ fault_case.description }}</p>
+
+<h3>相关图片：</h3>
+{% for img in fault_case.images.all %}
+  <img src="{{ img.image.url }}" style="max-width: 300px; margin: 10px;">
+{% empty %}
+  <p>暂无图片</p>
+{% endfor %}
+
+</body>
+</html>
