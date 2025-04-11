@@ -12,7 +12,7 @@ def index_view(request):
     context = {
         'page_title': 'Factory Status Home',
     }
-    return render(request, 'myapp/index.html', context)
+    return render(request, 'myapp/index2.html', context)
 
 
 # ViewSet for User model

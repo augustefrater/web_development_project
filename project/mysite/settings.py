@@ -18,8 +18,11 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# external user id
 API_SYSTEM_USER_ID = 3
 
+# Simple uploaded file storage
+# https://learndjango.com/tutorials/django-file-and-image-uploads-tutorial
 MEDIA_URL = '/media/' # The URL prefix for accessing uploaded files via HTTP
 MEDIA_ROOT = BASE_DIR / 'media' # The absolute path on the server where files will be saved
 
@@ -136,9 +139,3 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-# Simple uploaded file storage
-# https://learndjango.com/tutorials/django-file-and-image-uploads-tutorial
-MEDIA_ROOT =  BASE_DIR / 'storage' / 'media'
-MEDIA_URL = '/media/'

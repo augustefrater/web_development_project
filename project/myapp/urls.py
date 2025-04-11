@@ -20,11 +20,11 @@ router.register(r'machine-assignments', MachineAssignmentViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    # path('', views.index_view, name='index'),
+    path('', views.index_view, name='index'),
     path('api/external/warnings/create/', WarningCreateAPIView.as_view(), name='api_external_warning_create'),
     path('api/external/faults/create/', FaultCaseCreateAPIView.as_view(), name='api_external_fault_create'),
 ]
 
-# Add this snippet to serve media files during development
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
