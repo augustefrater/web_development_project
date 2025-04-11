@@ -1,6 +1,8 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from .models import Machine, Warning, FaultCase, FaultNote, FaultNoteImage, FaultComment, MachineAssignment
-from .serializers import UserSerializer, MachineSerializer, WarningSerializer, FaultCaseSerializer, FaultNoteSerializer, FaultNoteImageSerializer, FaultCommentSerializer, MachineAssignmentSerializer
+from .serializers import UserSerializer, MachineSerializer, WarningSerializer, FaultCaseSerializer, FaultNoteSerializer, \
+    FaultNoteImageSerializer, FaultCommentSerializer, MachineAssignmentSerializer, WarningCreateSerializer
+
 from django.contrib.auth.models import User
 
 
@@ -37,3 +39,10 @@ class FaultCommentViewSet(viewsets.ModelViewSet):
 class MachineAssignmentViewSet(viewsets.ModelViewSet):
     queryset = MachineAssignment.objects.all()
     serializer_class = MachineAssignmentSerializer
+
+class WarningCreateAPIView(generics.CreateAPIView):
+    """
+    API endpoint to create a new Warning via POST request.
+    Expects JSON data: {"machine_id": "...", "warning_text": "..."}
+    """
+    serializer_class = WarningCreateSerializer

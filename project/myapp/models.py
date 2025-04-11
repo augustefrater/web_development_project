@@ -19,6 +19,8 @@ FAULT_STATUS_CHOICES = [
 ASSIGNMENT_ROLE_CHOICES = [
     ('Technician', 'Technician'),
     ('Repair', 'Repair'),
+    ('Manager', 'Manager'),
+    ('ViewOnly', 'ViewOnly'),
 ]
 
 # --- Models ---
@@ -101,7 +103,8 @@ class Warning(models.Model):
     warning_text = models.TextField(help_text="Description of the warning.")
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT, # Prevent deleting users who created warnings? Or SET_NULL?
+        on_delete=models.PROTECT, # Prevent deleting users who created warnings
+        null=True,
         related_name='warnings_created'
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -110,7 +113,6 @@ class Warning(models.Model):
         db_index=True, # Index for quickly finding active warnings
         help_text="Is this warning currently active?"
     )
-    # Optional: Add 'resolved_by' and 'resolved_at' if needed for tracking who cleared it
 
     def __str__(self):
         return f"Warning for {self.machine.name} ({'Active' if self.is_active else 'Inactive'}) - {self.warning_text[:50]}..."
