@@ -18,6 +18,7 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+API_SYSTEM_USER_ID = 3
 
 MEDIA_URL = '/media/' # The URL prefix for accessing uploaded files via HTTP
 MEDIA_ROOT = BASE_DIR / 'media' # The absolute path on the server where files will be saved

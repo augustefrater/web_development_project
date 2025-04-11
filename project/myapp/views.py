@@ -1,10 +1,18 @@
 from rest_framework import viewsets, generics
 from .models import Machine, Warning, FaultCase, FaultNote, FaultNoteImage, FaultComment, MachineAssignment
 from .serializers import UserSerializer, MachineSerializer, WarningSerializer, FaultCaseSerializer, FaultNoteSerializer, \
-    FaultNoteImageSerializer, FaultCommentSerializer, MachineAssignmentSerializer, WarningCreateSerializer
+    FaultNoteImageSerializer, FaultCommentSerializer, MachineAssignmentSerializer, WarningCreateSerializer, \
+    FaultCaseCreateSerializer
 
 from django.contrib.auth.models import User
+from django.shortcuts import render
 
+
+def index_view(request):
+    context = {
+        'page_title': 'Factory Status Home',
+    }
+    return render(request, 'myapp/index.html', context)
 
 
 # ViewSet for User model
@@ -46,3 +54,10 @@ class WarningCreateAPIView(generics.CreateAPIView):
     Expects JSON data: {"machine_id": "...", "warning_text": "..."}
     """
     serializer_class = WarningCreateSerializer
+
+class FaultCaseCreateAPIView(generics.CreateAPIView):
+    """
+    API endpoint to create a new FaultCase via POST request.
+    Expects JSON data: {"machine_id": "...", "initial_note_text": "..."}
+    """
+    serializer_class = FaultCaseCreateSerializer

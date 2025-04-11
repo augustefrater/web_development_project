@@ -3,8 +3,10 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from django.conf import settings           # Import settings
 from django.conf.urls.static import static # Import static
+
+from . import views
 from .views import UserViewSet, MachineViewSet, WarningViewSet, FaultCaseViewSet, FaultNoteViewSet, \
-    FaultNoteImageViewSet, FaultCommentViewSet, MachineAssignmentViewSet, WarningCreateAPIView
+    FaultNoteImageViewSet, FaultCommentViewSet, MachineAssignmentViewSet, WarningCreateAPIView, FaultCaseCreateAPIView
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -18,7 +20,9 @@ router.register(r'machine-assignments', MachineAssignmentViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
+    # path('', views.index_view, name='index'),
     path('api/external/warnings/create/', WarningCreateAPIView.as_view(), name='api_external_warning_create'),
+    path('api/external/faults/create/', FaultCaseCreateAPIView.as_view(), name='api_external_fault_create'),
 ]
 
 # Add this snippet to serve media files during development
