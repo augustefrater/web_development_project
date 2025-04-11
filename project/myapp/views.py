@@ -1,4 +1,6 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
+from rest_framework.response import Response
+
 from .models import Machine, Warning, FaultCase, FaultNote, FaultNoteImage, FaultComment, MachineAssignment
 from .serializers import UserSerializer, MachineSerializer, WarningSerializer, FaultCaseSerializer, FaultNoteSerializer, \
     FaultNoteImageSerializer, FaultCommentSerializer, MachineAssignmentSerializer, WarningCreateSerializer, \
@@ -55,9 +57,36 @@ class WarningCreateAPIView(generics.CreateAPIView):
     """
     serializer_class = WarningCreateSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        success_data = {
+            "message": "Warning recorded successfully.",
+            "status": "success"
+        }
+        return Response(success_data, status=status.HTTP_201_CREATED)
+
+
+
 class FaultCaseCreateAPIView(generics.CreateAPIView):
     """
     API endpoint to create a new FaultCase via POST request.
     Expects JSON data: {"machine_id": "...", "initial_note_text": "..."}
     """
     serializer_class = FaultCaseCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        # 1. get Serializer instance
+        serializer = self.get_serializer(data=request.data)
+        # 2. validate Serializer，
+        serializer.is_valid(raise_exception=True)
+        # 3. execute create (call serializer.save() -> serializer.create())
+        self.perform_create(serializer)
+
+        # --- 4. if success ---
+        success_data = {
+            "message": "Fault case created successfully.",
+        }
+        return Response(success_data, status=status.HTTP_201_CREATED)
