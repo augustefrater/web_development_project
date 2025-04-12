@@ -1,0 +1,31 @@
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgre
+    environment:
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_PASSWORD: adminpassword
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      DATABASE_URL: postgres://admin:adminpassword@postgres:5432/mydatabase
+    volumes:
+      - ./project/manage.py:/app/manage.py
+      - ./project/mysite:/app/mysite
+      - ./project/myapp:/app/myapp
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    command: python manage.py runserver 0.0.0.0:8000
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - posgre_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  posgre_data:

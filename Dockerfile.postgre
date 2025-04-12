@@ -5,12 +5,13 @@ WORKDIR /app
 # install app dependencies
 COPY /project/requirements.txt .
 RUN pip install -r requirements.txt
+RUN pip install psycopg2-binary==2.9.10
 
 # setup entrypoint
-COPY /project/docker_entrypoint.sh .
-RUN chmod +x docker_entrypoint.sh
+COPY /project/docker_entrypoint_postgre.sh .
+RUN chmod +x docker_entrypoint_postgre.sh
 
-ENTRYPOINT ["/app/docker_entrypoint.sh"]
+ENTRYPOINT ["/app/docker_entrypoint_postgre.sh"]
 
 EXPOSE 8000
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
