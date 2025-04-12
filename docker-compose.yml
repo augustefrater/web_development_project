@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    environment:
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_PASSWORD: adminpassword
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      DATABASE_URL: sqlite:////app/storage/db.sqlite3
+    volumes:
+      - ./project/mysite:/app/mysite
+      - ./project/myapp:/app/myapp
+      - db_data:/app/storage
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+volumes:
+  db_data:

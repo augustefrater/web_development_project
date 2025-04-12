@@ -88,10 +88,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Configure using DATABASE_URL environment variable. Defaults to local SQLite
 # https://pypi.org/project/dj-database-url/ 
 
+DATABASE_URL = os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR / 'storage' / 'db.sqlite3'}")
 DATABASES = {
     'default': dj_database_url.config(
-        # default=f'sqlite:///{BASE_DIR / 'storage' / 'db.sqlite3'}',
-        default=f"sqlite:///{BASE_DIR / 'storage' / 'db.sqlite3'}",
+        default=DATABASE_URL,
         conn_max_age=600,
         conn_health_checks=True,
     )
