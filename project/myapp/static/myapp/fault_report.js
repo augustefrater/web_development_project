@@ -1,56 +1,80 @@
-// Wait for the full HTML document to be loaded before running the script
+// ✅ Wait until the full HTML document is loaded before executing the JavaScript code
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Get references to DOM elements using their IDs
-    const machineSelect = document.getElementById("machine");   // The <select> dropdown for machine options
-    const form = document.getElementById("fault-form");         // The form element to handle submissions
-    const result = document.getElementById("result");           // Paragraph where success/error messages will be displayed
+    // 🔐 Get the CSRF token from cookies (Django uses it to prevent Cross-Site Request Forgery)
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + "=") {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
   
-    // Fetch the list of machines from the API to populate the dropdown
+    const csrfToken = getCookie("csrftoken"); // ✅ Extracted from browser cookies
+    console.log("🔐 CSRF Token:", csrfToken); // 👀 Useful for debugging
+  
+    // 🎯 Get references to important DOM elements using their IDs
+    const machineSelect = document.getElementById("machine");   // Dropdown menu to choose a machine
+    const form = document.getElementById("fault-form");         // The form used to submit a fault report
+    const result = document.getElementById("result");           // Paragraph where success or error messages will be displayed
+  
+    // 🔄 Fetch the list of machines from the backend API
     fetch("/api/machines/")
-      .then(res => res.json()) // Parse the JSON response
+      .then(res => res.json()) // Parse the response from the server as JSON
       .then(data => {
-        // For each machine received from the API, create an <option> element
         data.forEach(machine => {
-          const option = document.createElement("option");
-          option.value = machine.machine_id; // Set the option's value to the machine ID
-          option.textContent = `${machine.name} (${machine.status})`; // Display machine name and status
-          machineSelect.appendChild(option); // Add the option to the dropdown
+          const option = document.createElement("option"); // Create a new <option> element
+          option.value = machine.machine_id;
+          option.textContent = `${machine.name} (${machine.status})`;
+          machineSelect.appendChild(option);
         });
       });
   
-    // Listen for the form submission event
+    // 📤 Listen for form submission and handle it using JavaScript
     form.addEventListener("submit", async (e) => {
-      e.preventDefault(); // Prevent the default form submission (which would reload the page)
+      e.preventDefault(); // Prevents page reload
+      console.log("📤 Submitting fault report...");
   
-      // Build the payload to be sent to the backend
+      // 🧱 Prepare the data to be sent to the backend
       const payload = {
-        machine: machineSelect.value,                           // Selected machine ID
-        note: document.getElementById("note").value             // Text entered in the note field
+        machine: machineSelect.value,
+        note: document.getElementById("note").value,
+        created_by: document.getElementById("created_by").value // ✅ Manually entered username
       };
+      console.log("📦 Payload:", payload);
   
       try {
-        // Send a POST request to the fault-cases API endpoint
+        // 📡 Send the data to the backend API using a POST request
         const response = await fetch("/api/fault-cases/", {
-          method: "POST",                                       // HTTP method
+          method: "POST",
           headers: {
-            "Content-Type": "application/json"                 // Inform the server we’re sending JSON
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken // ✅ Send CSRF token in header
           },
-          body: JSON.stringify(payload)                        // Convert the payload to a JSON string
+          credentials: "same-origin", // ✅ Include cookies with request (for session authentication)
+          body: JSON.stringify(payload)
         });
   
+        // ✅ Handle the server's response
         if (response.ok) {
-          // If the request was successful, show a confirmation and reset the form
           result.textContent = "✅ Fault report submitted!";
+          result.style.color = "green";
           form.reset();
         } else {
-          // If the server returns an error, parse and show it
           const err = await response.json();
           result.textContent = "❌ Error: " + JSON.stringify(err);
+          result.style.color = "red";
         }
       } catch (error) {
-        // If the request fails (e.g., network error), show the error
         result.textContent = "❌ Request failed: " + error;
+        result.style.color = "red";
       }
     });
-  });
+});

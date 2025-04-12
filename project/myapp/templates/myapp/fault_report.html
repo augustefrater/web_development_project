@@ -19,6 +19,8 @@
   <!-- Main visible heading of the page -->
 
   <form id="fault-form">
+    <p style="color: blue;">Logged in: {{ request.user.username }}</p>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <!-- This is the form used to submit a fault report.
          The `id` allows JavaScript to reference and handle the form programmatically. -->
 
@@ -36,6 +38,10 @@
     <!-- Text area where the user can describe the fault.
          The `id` is used to get the input value in JavaScript.
          The `required` attribute ensures the user cannot submit the form empty. -->
+    
+    <label for="created_by">Created by (username):</label><br>
+    <input type="text" id="created_by" name="created_by" required><br><br>
+    
 
     <button type="submit">Submit Fault</button>
     <!-- Submit button for the form.

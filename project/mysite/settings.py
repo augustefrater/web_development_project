@@ -145,3 +145,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://learndjango.com/tutorials/django-file-and-image-uploads-tutorial
 MEDIA_ROOT =  BASE_DIR / 'storage' / 'media'
 MEDIA_URL = '/media/'
+
+# Django REST Framework configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Enables session-based login
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Ensures views require login by default
+    ]
+}

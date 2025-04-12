@@ -27,9 +27,16 @@ class WarningSerializer(serializers.ModelSerializer):
 
 # Represents a machine fault case including its status and resolution
 class FaultCaseSerializer(serializers.ModelSerializer):
+    # Override the created_by field to accept a username instead of a full User object
+    created_by = serializers.SlugRelatedField(
+        slug_field='username',              # Use the 'username' field for lookup
+        queryset=User.objects.all(),        # Match it against all existing users
+        help_text="The username of the user reporting the fault."
+    )
+
     class Meta:
         model = FaultCase
-        fields = '__all__'
+        fields = '__all__'  # Include all fields (machine, created_by, status, timestamps...)
 
 # Handles internal notes made about a fault case
 class FaultNoteSerializer(serializers.ModelSerializer):
