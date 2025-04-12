@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Machine Status Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+  <div id="navbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+      </div>
+      <span>MachineMonitor</span>
+    </div>
+    <div class="nav-items">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="fault-report.html">Report Fault</a>
+        <a href="profile.html">Profile</a>
+    </div>
+  </div>
+
+  <main>
+    <div class="header">
+      <h1 class="title">Machine Status Dashboard</h1>
+      <button class="refresh-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+        </svg>
+        <span>Refresh</span>
+      </button>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3 class="card-title">Total Machines</h3>
+        <div class="card-value">48</div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Online</h3>
+        <div class="card-value" style="color: #4ade80;">36</div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Offline</h3>
+        <div class="card-value" style="color: #f87171;">5</div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Maintenance</h3>
+        <div class="card-value" style="color: #facc15;">7</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="chart-title">Machine Status Overview</h3>
+        <div class="chart-actions">
+          <button class="chart-btn active">Day</button>
+          <button class="chart-btn">Week</button>
+          <button class="chart-btn">Month</button>
+        </div>
+      </div>
+      <canvas id="statusChart"></canvas>
+    </div>
+
+    <div class="search-container">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="search" id="searchInput" placeholder="Search machine by name, status, or location..." />
+    </div>
+
+    <div id="machineList">
+      <div class="machine-item">
+        <div class="machine-status status-online"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine A-101</div>
+          <div class="machine-details">Production Line 1 • Last update: 5 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+      <div class="machine-item">
+        <div class="machine-status status-online"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine B-205</div>
+          <div class="machine-details">Production Line 2 • Last update: 3 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+      <div class="machine-item">
+        <div class="machine-status status-maintenance"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine C-310</div>
+          <div class="machine-details">Packaging Line • Last update: 20 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+      <div class="machine-item">
+        <div class="machine-status status-offline"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine D-423</div>
+          <div class="machine-details">Assembly Line • Last update: 45 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+      <div class="machine-item">
+        <div class="machine-status status-online"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine A-102</div>
+          <div class="machine-details">Production Line 1 • Last update: 12 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer">
+    © 2025 MachineMonitor Dashboard | Version 2.3.1
+  </div>
+
+  <script>
+  </script>
+</body>
+</html>

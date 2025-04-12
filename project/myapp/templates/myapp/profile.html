@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/profile.css">
+  <script src="assets/js/main.js" defer></script>
+  
+</head>
+<body>
+  <div id="navbar">
+    <div class="logo">
+      <span style="font-weight: 700; color: var(--primary);">MachineMonitor</span>
+    </div>
+  </div>
+
+  <main>
+    <h2>User Profile</h2>
+    <p>Username: <span id="user-name">Admin</span></p>
+    <button onclick="redirectToSignup()" class="logout-btn">Logout</button>
+
+  </main>
+
+  <div id="footer">
+    © 2025 MachineMonitor. All rights reserved.
+  </div>
+  <script> function redirectToSignup() {
+    window.location.href = "signup.html";}</script>
+  
+  
+</body>
+</html>
