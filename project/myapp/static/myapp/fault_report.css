@@ -1,0 +1,78 @@
+/* === GENERAL PAGE STYLING === */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, modern font */
+    background-color: #f5f7fa; /* Light grey background for readability */
+    color: #333; /* Dark grey text */
+    margin: 0;
+    padding: 2rem;
+  }
+  
+  /* === HEADER === */
+  
+  h2 {
+    text-align: center;
+    color: #1e90ff; /* Nice blue for the title */
+    margin-bottom: 2rem;
+  }
+  
+  /* === FORM CONTAINER === */
+  
+  form {
+    max-width: 500px;           /* Limit width for better layout */
+    margin: 0 auto;             /* Center the form horizontally */
+    padding: 2rem;
+    background-color: #ffffff;  /* White background for contrast */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow around the box */
+    border-radius: 8px;         /* Rounded corners */
+  }
+  
+  /* === LABELS === */
+  
+  label {
+    font-weight: bold;
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  /* === INPUTS & TEXTAREAS === */
+  
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  /* === BUTTON === */
+  
+  button[type="submit"] {
+    margin-top: 1.5rem;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0f75d4; /* Darker on hover */
+  }
+  
+  /* === RESULT MESSAGE === */
+  
+  #result {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }

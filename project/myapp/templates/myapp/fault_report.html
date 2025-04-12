@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<!-- Declare that this is an HTML5 document -->
+
+<html lang="en">
+<!-- Begin the HTML document and set the primary language to English -->
+<link rel="stylesheet" href="{% static 'myapp/fault_report.css' %}">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- Use UTF-8 character encoding to support all characters (accents, symbols, etc.) -->
+
+  <title>Report a Fault</title>
+  <!-- The title that will appear in the browser tab -->
+</head>
+
+<body>
+  <h2>Report a Machine Fault</h2>
+  <!-- Main visible heading of the page -->
+
+  <form id="fault-form">
+    <!-- This is the form used to submit a fault report.
+         The `id` allows JavaScript to reference and handle the form programmatically. -->
+
+    <label for="machine">Machine:</label>
+    <!-- Label associated with the machine dropdown menu -->
+
+    <select id="machine" name="machine" required></select><br><br>
+    <!-- Dropdown menu that will be dynamically filled with machines from the API (/api/machines/).
+         The `required` attribute prevents the form from being submitted unless a machine is selected. -->
+
+    <label for="note">Note:</label><br>
+    <!-- Label for the note textarea -->
+
+    <textarea id="note" name="note" required></textarea><br><br>
+    <!-- Text area where the user can describe the fault.
+         The `id` is used to get the input value in JavaScript.
+         The `required` attribute ensures the user cannot submit the form empty. -->
+
+    <button type="submit">Submit Fault</button>
+    <!-- Submit button for the form.
+         The form submission is handled with JavaScript using the Fetch API,
+         so the page does not reload. -->
+  </form>
+
+  <p id="result"></p>
+  <!-- This paragraph will display success or error messages after form submission -->
+
+  <script src="{% static 'myapp/fault_report.js' %}"></script>
+  <!-- Load the JavaScript file responsible for:
+       - Fetching the list of machines and inserting them into the dropdown
+       - Submitting the form using Fetch (AJAX style)
+</body>
+
+</html>

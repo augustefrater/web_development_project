@@ -5,6 +5,7 @@ from django.conf import settings           # Import settings
 from django.conf.urls.static import static # Import static
 from .views import UserViewSet, MachineViewSet, WarningViewSet, FaultCaseViewSet, FaultNoteViewSet, \
     FaultNoteImageViewSet, FaultCommentViewSet, MachineAssignmentViewSet, WarningCreateAPIView
+from .views import fault_report_page
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -19,6 +20,7 @@ router.register(r'machine-assignments', MachineAssignmentViewSet)
 urlpatterns = [
     path('api/', include(router.urls)),
     path('api/external/warnings/create/', WarningCreateAPIView.as_view(), name='api_external_warning_create'),
+    path('report-fault/', fault_report_page, name='fault_report'),
 ]
 
 # Add this snippet to serve media files during development

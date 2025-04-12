@@ -1,14 +1,17 @@
 #!/bin/sh
-set -ex
 
-# Move to application directory
-cd /app
+echo "🔧 Entrando a /app..."
+cd /app || exit 1
 
-# Run any new database migrations
-python ./manage.py migrate
+echo "📦 Aplicando migraciones..."
+python manage.py makemigrations
+python manage.py migrate
 
-# Create Admin User, ignore errors if it already exists
-python ./manage.py createsuperuser --noinput || true
+echo "👤 Creando superusuario si no existe..."
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); \
+      User.objects.filter(username='admin').exists() or \
+      User.objects.create_superuser('admin', 'admin@localhost', 'admin')" \
+      | python manage.py shell
 
-# Run Django’s development server
-python ./manage.py runserver 0.0.0.0:8000
+echo "🚀 Arrancando servidor Django..."
+python manage.py runserver 0.0.0.0:8000

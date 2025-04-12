@@ -4,8 +4,9 @@ from .serializers import UserSerializer, MachineSerializer, WarningSerializer, F
     FaultNoteImageSerializer, FaultCommentSerializer, MachineAssignmentSerializer, WarningCreateSerializer
 
 from django.contrib.auth.models import User
-
-
+from django.http import JsonResponse
+from .models import Machine  # make sure your Machine model is defined
+from django.shortcuts import render
 
 # ViewSet for User model
 class UserViewSet(viewsets.ModelViewSet):
@@ -46,3 +47,15 @@ class WarningCreateAPIView(generics.CreateAPIView):
     Expects JSON data: {"machine_id": "...", "warning_text": "..."}
     """
     serializer_class = WarningCreateSerializer
+
+
+def machine_status_api(request):
+    machines = Machine.objects.all()
+    data = [
+        {"id": m.id, "name": m.name, "status": m.status}
+        for m in machines
+    ]
+    return JsonResponse(data, safe=False)
+
+def fault_report_page(request):
+    return render(request, 'myapp/fault_report.html')
