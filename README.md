@@ -144,11 +144,11 @@ web_development_project:1.0
 ### for postgre
 #### first build docker image
 ```bash
-docker build -f docker-compose.postgre.yml -t web_development_project_postgre:1.0 .
+docker build -f Dockerfile.postgre -t web_development_project_postgre:1.0 .
 ```
 
 ```bash
-docker run -p 8000:8000 \
+docker run --network host \
 -v ./project/myapp:/app/myapp \
 -v ./project/mysite:/app/mysite \
 -v ./project/manage.py:/app/manage.py \
