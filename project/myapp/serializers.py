@@ -61,11 +61,18 @@ class WarningCreateSerializer(serializers.Serializer):
     machine_id = serializers.CharField(max_length=12, help_text="The ID of the machine experiencing the warning.")
     warning_text = serializers.CharField(help_text="The description of the warning.")
 
-    # validation, Check that the machine exists
     def validate_machine_id(self, value):
-        if not Machine.objects.filter(machine_id=value).exists():
+        """
+        Check that the machine exists AND that it is not already in 'Fault' state.
+        """
+        try:
+            machine = Machine.objects.get(machine_id=value)
+            if machine.status == 'Fault':
+                raise serializers.ValidationError("Cannot add a warning to a machine that is already in 'Fault' state.")
+        except Machine.DoesNotExist:
             raise serializers.ValidationError("Machine with this ID does not exist.")
-        return value
+
+        return machine
 
     def create(self, validated_data):
         """
@@ -94,7 +101,7 @@ class WarningCreateSerializer(serializers.Serializer):
         if machine.status != 'Fault': # when it's not 'Fault' status
              machine.status = 'Warning'
              machine.save()
-
+        print("======================================")
         return warning
 
 
