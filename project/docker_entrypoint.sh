@@ -1,5 +1,4 @@
 #!/bin/sh
-chmod +x app/docker_entrypoint.sh
 set -e
 
 STORAGE_DIR="/app/storage"

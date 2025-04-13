@@ -2,13 +2,11 @@ services:
   django:
     build: .
     environment:
-      DEBUG: "True"
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_PASSWORD: adminpassword
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       DATABASE_URL: sqlite:////app/storage/db.sqlite3
     volumes:
-      - ./project:/app
       - ./project/manage.py:/app/manage.py
       - ./project/mysite:/app/mysite
       - ./project/myapp:/app/myapp
@@ -16,6 +14,5 @@ services:
     ports:
       - "8000:8000"
     command: python manage.py runserver 0.0.0.0:8000
-    entrypoint: /app/docker_entrypoint.sh
 volumes:
   db_data:

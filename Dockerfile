@@ -3,12 +3,12 @@ FROM python:3.13.3-alpine
 WORKDIR /app
 
 # install app dependencies
-COPY project/requirements.txt .
+COPY /project/requirements.txt .
 RUN pip install -r requirements.txt
 
 # setup entrypoint
-COPY project/docker_entrypoint.sh /app/docker_entrypoint.sh
-RUN chmod +x /app/docker_entrypoint.sh
+COPY /project/docker_entrypoint.sh .
+RUN chmod +x docker_entrypoint.sh
 
 ENTRYPOINT ["/app/docker_entrypoint.sh"]
 
