@@ -1,5 +1,5 @@
 #!/bin/sh
-
+chmod +x app/docker_entrypoint.sh
 set -e
 
 STORAGE_DIR="/app/storage"
@@ -9,6 +9,7 @@ mkdir -p "$STORAGE_DIR"
 
 echo "Applying database migrations..."
 python manage.py migrate --noinput
+
 
 echo "Checking for superuser '$DJANGO_SUPERUSER_USERNAME'..."
 if python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); exit(0) if User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists() else exit(1)"; then

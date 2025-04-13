@@ -14,7 +14,7 @@ def index_view(request):
     context = {
         'page_title': 'Factory Status Home',
     }
-    return render(request, 'myapp/login.html', context)
+    return render(request, 'index.html')
 
 
 # ViewSet for User model
