@@ -20,9 +20,16 @@ router.register(r'machine-assignments', MachineAssignmentViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('', views.index_view, name='index'),
+    #path('', views.index_view, name='index'),
     path('api/external/warnings/create/', WarningCreateAPIView.as_view(), name='api_external_warning_create'),
     path('api/external/faults/create/', FaultCaseCreateAPIView.as_view(), name='api_external_fault_create'),
+    
+    path('', TemplateView.as_view(template_name='index.html'), name='index'),
+    path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),
+    path('fault-report/', TemplateView.as_view(template_name='fault-report.html'), name='fault-report'),
+    path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
+    path('login/', TemplateView.as_view(template_name='login.html'), name='login'),
+    path('signup/', TemplateView.as_view(template_name='signup.html'), name='signup'),
 ]
 
 
