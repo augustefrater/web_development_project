@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Login</title>
-  <link rel="stylesheet" href="../static/myapp/css/styles.css">
-  <link rel="stylesheet" href="../static/myapp/css/login.css">
-  <script src="static/myapp/js/auth.js" defer></script>
-  
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script src="static/js/auth.js" defer></script>
 </head>
 <body>
   <div id="navbar">
-    <div class="logo">
-      <span style="font-weight: 700; color: var(--primary);">MachineMonitor</span>
-    </div>
+    <div class="logo">MachineMonitor</div>
+    <a href="register.html">Register</a>
   </div>
 
   <form id="loginForm">
     <h2>Login</h2>
     <input type="text" id="username" placeholder="Username" required />
     <input type="password" id="password" placeholder="Password" required />
+    <select id="role">
+      <option value="admin">Admin</option>
+      <option value="technician">Technician</option>
+      <option value="manager">Manager</option>
+    </select>
     <button type="submit">Login</button>
   </form>
 
-  <div id="footer">
-    © 2025 MachineMonitor. All rights reserved.
-  </div>
+  <div id="footer">© 2025 MachineMonitor</div>
 </body>
 </html>

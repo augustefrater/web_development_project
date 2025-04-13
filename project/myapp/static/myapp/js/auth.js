@@ -1,13 +1,26 @@
-document.getElementById("loginForm").addEventListener("submit", function (e) {
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("loginForm");
+  form?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-  
-    if (!username || !password) {
-      alert("All fields are required!");
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (
+      storedUser?.username === username &&
+      storedUser?.password === password &&
+      storedUser?.role === role
+    ) {
+      localStorage.setItem(
+        "loggedInUser",
+        JSON.stringify({ username, role })
+      );
+      window.location.href = "profile.html";
     } else {
-      alert("Login successful! (Simulated)");
-      window.location.href = "dashboard.html";
+      alert("Invalid credentials or role mismatch.");
     }
   });
-  
+});

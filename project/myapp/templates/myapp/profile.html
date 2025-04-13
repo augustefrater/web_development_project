@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>User Profile</title>
-  <link rel="stylesheet" href="../static/myapp/css/styles.css">
-  <link rel="stylesheet" href="../static/myapp/css/profile.css">
-  <script src="static/myapp/js/main.js" defer></script>
-  
+  <meta charset="UTF-8" />
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="static/css/styles.css" />
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (!user) window.location.href = "login.html";
+
+      document.getElementById("user-name").textContent = user.username;
+      document.getElementById("user-role").textContent = user.role;
+    });
+
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "login.html";
+    }
+  </script>
 </head>
 <body>
   <div id="navbar">
-    <div class="logo">
-      <span style="font-weight: 700; color: var(--primary);">MachineMonitor</span>
-    </div>
+    <div class="logo">MachineMonitor</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="fault-report.html">Report Fault</a>
+      <a href="profile.html">Profile</a>
+      <a href="login.html">Login</a>
+    </nav>
   </div>
 
   <main>
-    <h2>User Profile</h2>
-    <p>Username: <span id="user-name">Admin</span></p>
-    <button onclick="redirectToSignup()" class="logout-btn">Logout</button>
-
+    <h2>Welcome, <span id="user-name"></span></h2>
+    <p>Role: <span id="user-role"></span></p>
+    <button onclick="logout()">Logout</button>
   </main>
 
-  <div id="footer">
-    © 2025 MachineMonitor. All rights reserved.
-  </div>
-  <script> function redirectToSignup() {
-    window.location.href = "signup.html";}</script>
-  
-  
+  <div id="footer">© 2025 MachineMonitor</div>
 </body>
 </html>

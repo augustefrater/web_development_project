@@ -40,7 +40,8 @@ services:
       - ./project/manage.py:/app/manage.py
       - ./project/mysite:/app/mysite
       - ./project/myapp:/app/myapp
-      - path/to/your/db.sqlite3:/app/storage/db.sqlite3 # your sqlite3 db path
+      # here
+      - path/to/your/db.sqlite3:/app/storage/db.sqlite3
     ports:
       - "8000:8000"
     command: python manage.py runserver 0.0.0.0:8000
@@ -59,14 +60,14 @@ services:
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_PASSWORD: adminpassword
       DJANGO_SUPERUSER_EMAIL: admin@example.com
-      DATABASE_URL: YOUR_POSTGRESURL # your postgres url
+      # here
+      DATABASE_URL: YOUR_POSTGRESQLURL
     volumes:
       - ./project/manage.py:/app/manage.py
       - ./project/mysite:/app/mysite
       - ./project/myapp:/app/myapp
     ports:
       - "8000:8000"
-    network_mode: host  # If accessing localhost postgres url
     # depends_on:
     #   - postgres
     command: python manage.py runserver 0.0.0.0:8000
@@ -111,7 +112,6 @@ docker build -t web_development_project:1.0 .
 
 ```bash
 docker run -p 8000:8000 \
---name web_development_project \
 -v ./project/storage:/app/storage \
 -v ./project/myapp:/app/myapp \
 -v ./project/mysite:/app/mysite \
@@ -130,7 +130,6 @@ docker volume create db_data
 ```
 ```bash
 docker run -p 8000:8000 \
---name web_development_project \
 -v db_data:/app/storage \
 -v ./project/myapp:/app/myapp \
 -v ./project/mysite:/app/mysite \
@@ -145,12 +144,11 @@ web_development_project:1.0
 ### for postgre
 #### first build docker image
 ```bash
-docker build -f Dockerfile.postgre -t web_development_project_postgre:1.0 .
+docker build -f docker-compose.postgre.yml -t web_development_project_postgre:1.0 .
 ```
 
 ```bash
-docker run --network host \
---name web_development_project_postgre \
+docker run -p 8000:8000 \
 -v ./project/myapp:/app/myapp \
 -v ./project/mysite:/app/mysite \
 -v ./project/manage.py:/app/manage.py \
