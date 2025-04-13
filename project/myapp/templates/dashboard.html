@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="static/css/styles.css" />
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) return (window.location.href = "login.html");
+      document.getElementById('welcome').innerText = `Welcome, ${user.username} (${user.role})`;
+
+      // Load Role-specific data (simulated)
+      const roleData = {
+        admin: "Access to all systems and controls.",
+        technician: "Access to machine diagnostics.",
+        manager: "Access to analytics and reporting."
+      };
+      document.getElementById('role-desc').innerText = roleData[user.role];
+    });
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+  <div id="navbar">
+    <div class="logo">MachineMonitor</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="fault-report.html">Report Fault</a>
+      <a href="profile.html">Profile</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </div>
+  </div>
+
+  <main>
+    <h2 id="welcome">Welcome</h2>
+    <p id="role-desc"></p>
+  </main>
+
+  <div id="footer">© 2025 MachineMonitor. All rights reserved.</div>
+</body>
+</html>

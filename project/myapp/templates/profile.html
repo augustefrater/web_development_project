@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="static/css/styles.css" />
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (!user) window.location.href = "login.html";
+
+      document.getElementById("user-name").textContent = user.username;
+      document.getElementById("user-role").textContent = user.role;
+    });
+
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+  <div id="navbar">
+    <div class="logo">MachineMonitor</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="fault-report.html">Report Fault</a>
+      <a href="profile.html">Profile</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </div>
+
+  <main>
+    <h2>Welcome, <span id="user-name"></span></h2>
+    <p>Role: <span id="user-role"></span></p>
+    <button onclick="logout()">Logout</button>
+  </main>
+
+  <div id="footer">© 2025 MachineMonitor</div>
+</body>
+</html>
