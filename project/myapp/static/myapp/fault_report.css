@@ -1,4 +1,8 @@
 /* GENERAL LAYOUT */
+:root {
+    --primary: #2563eb; /* Example primary color */
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -6,6 +10,14 @@ body {
     background: linear-gradient(to right, #dce3e8, #f4f7fa);
     color: #333;
 }
+#navbar {
+    background-color: white;
+    padding: 1rem 2rem;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
 /* MAIN CONTAINER */
 .container {
@@ -129,3 +141,9 @@ p {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+#footer {
+    background-color: #1e293b;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }

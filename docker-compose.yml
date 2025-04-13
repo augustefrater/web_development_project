@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: ./project
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_PASSWORD: admin
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      DATABASE_URL: sqlite:////app/storage/db.sqlite3
+    volumes:
+      - ./project:/app
+      - ./project/storage/media:/app/media
+    command: python manage.py runserver 0.0.0.0:8000

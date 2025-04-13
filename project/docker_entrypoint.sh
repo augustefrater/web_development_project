@@ -1,17 +1,19 @@
 #!/bin/sh
 
-echo "🔧 Entrando a /app..."
+echo "🔧 Entering /app directory..."
 cd /app || exit 1
 
-echo "📦 Aplicando migraciones..."
+echo "📦 Applying migrations..."
 python manage.py makemigrations
 python manage.py migrate
 
-echo "👤 Creando superusuario si no existe..."
-echo "from django.contrib.auth import get_user_model; User = get_user_model(); \
-      User.objects.filter(username='admin').exists() or \
-      User.objects.create_superuser('admin', 'admin@localhost', 'admin')" \
-      | python manage.py shell
+echo "👤 Creating superuser if it doesn't exist..."
+echo "
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(username='${DJANGO_SUPERUSER_USERNAME}').exists():
+    User.objects.create_superuser('${DJANGO_SUPERUSER_USERNAME}', '${DJANGO_SUPERUSER_EMAIL}', '${DJANGO_SUPERUSER_PASSWORD}')
+" | python manage.py shell
 
-echo "🚀 Arrancando servidor Django..."
-python manage.py runserver 0.0.0.0:8000
+echo "🚀 Running command: $@"
+exec "$@"

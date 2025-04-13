@@ -17,6 +17,21 @@
 </head>
 
 <body>
+  <!-- Top navigation bar -->
+  <div id="navbar">
+    <div class="logo">
+      <!-- Branding: project name in bold and primary color -->
+      <span style="font-weight: 700; color: var(--primary);">MachineMonitor</span>
+    </div>
+
+    <!-- Navigation links -->
+    <div class="nav-items">
+      <a href="{% url 'index' %}">Home</a> <!-- Goes to index page -->
+      <a href="{% url 'dashboard' %}">Dashboard</a> <!-- Dashboard page -->
+      <a href="{% url 'fault_report' %}">Report Fault</a> <!-- Fault report form -->
+      <a href="{% url 'profile' %}">Profile</a> <!-- User profile page -->
+    </div>
+  </div>
   <!-- Main container to center and structure the page content -->
   <div class="container">
     
@@ -56,6 +71,10 @@
 
   </div>
 
+  <!-- Page footer -->
+  <div id="footer">
+    © 2025 MachineMonitor Dashboard | Version 2.3.1
+  </div>
   <!-- Link to the JavaScript file that handles form logic, machine loading, and image upload -->
   <script src="{% static 'myapp/fault_report.js' %}"></script>
 </body>
