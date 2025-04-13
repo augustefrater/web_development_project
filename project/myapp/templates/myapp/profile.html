@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile</title>
+
+  <!-- Load main and page-specific CSS from static files -->
+  <link rel="stylesheet" href="{% static 'myapp/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'myapp/profile.css' %}">
+
+  <!-- Load main JavaScript file (executed after DOM is ready) -->
+  <script src="{% static 'myapp/main.js' %}" defer></script>
+</head>
+<body>
+
+  <!-- Top navigation bar -->
+  <div id="navbar">
+    <div class="logo">
+      <!-- Branding: project name in bold and primary color -->
+      <span style="font-weight: 700; color: var(--primary);">MachineMonitor</span>
+    </div>
+
+    <!-- Navigation links -->
+    <div class="nav-items">
+      <!-- Home link -->
+      <a href="{% url 'index' %}">Home</a>
+      <!-- Link to fault reporting page -->
+      <a href="{% url 'fault_report' %}">Report Fault</a>
+      <!-- Current page: Profile -->
+      <a href="{% url 'profile' %}" class="nav-item active">Profile</a>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <main>
+    <!-- Page title -->
+    <h2>User Profile</h2>
+
+    <!-- Display the logged-in user's username -->
+    <p>Username: <span id="user-name"><strong>{{ request.user.username }}</strong></span></p>
+
+    <!-- Logout form (submits POST to Django's logout URL) -->
+    <form method="POST" action="{% url 'logout' %}">
+      {% csrf_token %} <!-- CSRF token for security -->
+      <button type="submit" class="logout-btn">Logout</button>
+    </form>
+  </main>
+
+  <!-- Footer with copyright -->
+  <div id="footer">
+    © 2025 MachineMonitor. All rights reserved.
+  </div>
+
+</body>
+</html>

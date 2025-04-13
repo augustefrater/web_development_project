@@ -1,6 +1,5 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from django.urls import path, include
 from django.conf import settings           # Import settings
 from django.conf.urls.static import static # Import static
 from .views import UserViewSet, MachineViewSet, WarningViewSet, FaultCaseViewSet, FaultNoteViewSet, \
@@ -9,6 +8,10 @@ from .views import fault_report_page
 from .views import assigned_machines_api
 from . import views
 from django.urls import path, include
+from .views import index_page, profile_page
+from django.contrib.auth.views import LogoutView
+from .views import custom_login
+
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -27,6 +30,10 @@ urlpatterns = [
     path("api/assigned-machines/", assigned_machines_api, name="assigned_machines_api"),
     path('upload-image/', views.upload_fault_image, name='upload_image'),
     path('upload-success/', views.upload_success, name='upload_success'),
+    path('', index_page, name='index'),
+    path("login/", custom_login, name="custom_login"),
+    path("profile/", profile_page, name="profile"),
+    path("logout/", LogoutView.as_view(next_page="index"), name="logout"),
 ]
 
 # Add this snippet to serve media files during development
