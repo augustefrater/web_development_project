@@ -8,7 +8,7 @@ from .views import fault_report_page
 from .views import assigned_machines_api
 from . import views
 from django.urls import path, include
-from .views import index_page, profile_page
+from .views import index_page, profile_page, dashboard_page
 from django.contrib.auth.views import LogoutView
 from .views import custom_login
 
@@ -34,6 +34,7 @@ urlpatterns = [
     path("login/", custom_login, name="custom_login"),
     path("profile/", profile_page, name="profile"),
     path("logout/", LogoutView.as_view(next_page="index"), name="logout"),
+    path('dashboard/', dashboard_page, name='dashboard'),
 ]
 
 # Add this snippet to serve media files during development

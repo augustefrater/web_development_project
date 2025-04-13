@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<!-- Declare the document as HTML5 -->
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Set character encoding to UTF-8 -->
+
+  <title>Machine Status Dashboard</title>
+  <!-- Page title shown on browser tab -->
+
+  <!-- Import Chart.js from CDN to render charts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+
+  <!-- Load CSS styles specific to the dashboard -->
+  <link rel="stylesheet" href="{% static 'myapp/dashboard.css' %}">
+</head>
+
+<body>
+  <!-- Top navigation bar -->
+  <div id="navbar">
+    <div class="logo">
+      <!-- Logo icon using SVG -->
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" ...> ... </svg>
+      </div>
+      <span>MachineMonitor</span>
+    </div>
+
+    <!-- Navigation links -->
+    <div class="nav-items">
+        <a href="{% url 'index' %}">Home</a> <!-- Goes to index page -->
+        <a href="{% url 'dashboard' %}">Dashboard</a> <!-- Dashboard page -->
+        <a href="{% url 'fault_report' %}">Report Fault</a> <!-- Fault report form -->
+        <a href="{% url 'profile' %}">Profile</a> <!-- User profile page -->
+    </div>
+  </div>
+
+  <main>
+    <!-- Page header with title and refresh button -->
+    <div class="header">
+      <h1 class="title">Machine Status Dashboard</h1>
+      <button class="refresh-btn">
+        <!-- Refresh icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" ...> ... </svg>
+        <span>Refresh</span>
+      </button>
+    </div>
+
+    <!-- Key metrics shown in cards -->
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3 class="card-title">Total Machines</h3>
+        <div class="card-value">48</div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Online</h3>
+        <div class="card-value" style="color: #4ade80;">36</div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Offline</h3>
+        <div class="card-value" style="color: #f87171;">5</div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Maintenance</h3>
+        <div class="card-value" style="color: #facc15;">7</div>
+      </div>
+    </div>
+
+    <!-- Chart section showing status over time -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="chart-title">Machine Status Overview</h3>
+
+        <!-- Buttons to switch between Day / Week / Month -->
+        <div class="chart-actions">
+          <button class="chart-btn active">Day</button>
+          <button class="chart-btn">Week</button>
+          <button class="chart-btn">Month</button>
+        </div>
+      </div>
+
+      <!-- Chart canvas where the Chart.js graph will be rendered -->
+      <canvas id="statusChart"></canvas>
+    </div>
+
+    <!-- Search bar to filter machines -->
+    <div class="search-container">
+      <svg class="search-icon" ...> ... </svg>
+      <input type="search" id="searchInput" placeholder="Search machine by name, status, or location..." />
+    </div>
+
+    <!-- List of machines with status and details -->
+    <div id="machineList">
+      <div class="machine-item">
+        <div class="machine-status status-online"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine A-101</div>
+          <div class="machine-details">Production Line 1 • Last update: 5 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+
+      <!-- Additional machine entries... -->
+      <div class="machine-item">
+        <div class="machine-status status-online"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine B-205</div>
+          <div class="machine-details">Production Line 2 • Last update: 3 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+
+      <div class="machine-item">
+        <div class="machine-status status-maintenance"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine C-310</div>
+          <div class="machine-details">Packaging Line • Last update: 20 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+
+      <div class="machine-item">
+        <div class="machine-status status-offline"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine D-423</div>
+          <div class="machine-details">Assembly Line • Last update: 45 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+
+      <div class="machine-item">
+        <div class="machine-status status-online"></div>
+        <div class="machine-info">
+          <div class="machine-name">Machine A-102</div>
+          <div class="machine-details">Production Line 1 • Last update: 12 min ago</div>
+        </div>
+        <div class="machine-action">View Details</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Page footer -->
+  <div id="footer">
+    © 2025 MachineMonitor Dashboard | Version 2.3.1
+  </div>
+
+  <!-- Placeholder for custom JavaScript if needed -->
+  <script>
+  </script>
+</body>
+</html>

@@ -23,12 +23,10 @@
 
     <!-- Navigation links -->
     <div class="nav-items">
-      <!-- Home link -->
-      <a href="{% url 'index' %}">Home</a>
-      <!-- Link to fault reporting page -->
-      <a href="{% url 'fault_report' %}">Report Fault</a>
-      <!-- Current page: Profile -->
-      <a href="{% url 'profile' %}" class="nav-item active">Profile</a>
+      <a href="{% url 'index' %}">Home</a> <!-- Goes to index page -->
+      <a href="{% url 'dashboard' %}">Dashboard</a> <!-- Dashboard page -->
+      <a href="{% url 'fault_report' %}">Report Fault</a> <!-- Fault report form -->
+      <a href="{% url 'profile' %}">Profile</a> <!-- User profile page -->
     </div>
   </div>
 

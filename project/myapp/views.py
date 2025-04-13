@@ -31,6 +31,10 @@ def profile_page(request):
 def fault_report_page(request):
     return render(request, 'myapp/fault_report.html')
 
+@login_required
+def dashboard_page(request):
+    return render(request, 'myapp/dashboard.html')
+
 # Upload success page
 def upload_success(request):
     return render(request, 'myapp/upload_success.html')
@@ -64,7 +68,7 @@ def assigned_machines_api(request):
     ]
     return JsonResponse(machines, safe=False)
 
-# ✅ View to return machine statuses (if needed)
+# View to return machine statuses (if needed)
 def machine_status_api(request):
     machines = Machine.objects.all()
     data = [
@@ -72,8 +76,6 @@ def machine_status_api(request):
         for m in machines
     ]
     return JsonResponse(data, safe=False)
-
-# 🔧 DRF ViewSets below:
 
 def custom_login(request):
     if request.method == "POST":
@@ -89,7 +91,7 @@ def custom_login(request):
             messages.error(request, 'Invalid username or password.')
 
     return render(request, "myapp/registration/login.html")
-
+# 🔧 DRF ViewSets below:
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -154,3 +156,4 @@ class MachineAssignmentViewSet(viewsets.ModelViewSet):
 
 class WarningCreateAPIView(generics.CreateAPIView):
     serializer_class = WarningCreateSerializer
+

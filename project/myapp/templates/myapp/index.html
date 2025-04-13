@@ -1,4 +1,3 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +22,7 @@
     </div>
     <div class="nav-items">
         <a href="{% url 'index' %}">Home</a>
-        <a href="dashboard.html">Dashboard</a>
+        <a href="{% url 'dashboard' %}">Dashboard</a>
         <a href="{% url 'fault_report' %}">Report Fault</a>
         <a href="{% url 'profile' %}">Profile</a>
     </div>
@@ -35,7 +34,7 @@
         <h1 class="hero-title">Welcome to MachineMonitor</h1>
         <p class="hero-subtitle">An advanced platform for real-time machine monitoring, fault reporting, and maintenance tracking that helps you maximize efficiency and minimize downtime.</p>
         <div class="hero-buttons">
-          <a href="dashboard.html" class="btn btn-light">View Dashboard</a>
+          <a href="{% url 'dashboard' %}" class="btn btn-light">View Dashboard</a>
           <a href="{% url 'fault_report' %}" class="btn btn-primary">Report a Fault</a>
         </div>
       </div>
