@@ -1,30 +1,26 @@
-{% load static %}
 <!DOCTYPE html>
-<!-- Declares this document as HTML5 -->
-
 <html lang="en">
-<!-- Sets the primary language of the page to English -->
-
 <head>
   <meta charset="UTF-8">
-  <!-- Ensures that the document uses UTF-8 encoding to support all characters -->
-
-  <title>Report a Fault</title>
-  <!-- The title that appears in the browser tab -->
-
-  <!-- Link to the external CSS file (served via Django static files system) -->
+  <title>Report Fault | MachineMonitor</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
   <link rel="stylesheet" href="{% static 'myapp/fault_report.css' %}">
+ 
 </head>
-
 <body>
-  <!-- Top navigation bar -->
   <div id="navbar">
     <div class="logo">
-      <!-- Branding: project name in bold and primary color -->
-      <span style="font-weight: 700; color: var(--primary);">MachineMonitor</span>
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+      </div>
+      <span>MachineMonitor</span>
     </div>
-
-    <!-- Navigation links -->
     <div class="nav-items">
       <a href="{% url 'index' %}">Home</a> <!-- Goes to index page -->
       <a href="{% url 'dashboard' %}">Dashboard</a> <!-- Dashboard page -->
@@ -32,51 +28,225 @@
       <a href="{% url 'profile' %}">Profile</a> <!-- User profile page -->
     </div>
   </div>
-  <!-- Main container to center and structure the page content -->
-  <div class="container">
-    
-    <!-- Main title of the page -->
-    <h2>Report a Machine Fault</h2>
 
-    <!-- The form to submit a new fault report -->
-    <form id="fault-form">
-      <!-- CSRF token for security, required by Django to validate POST requests -->
-      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
-      <!-- Dropdown to select a machine (filled dynamically with JavaScript) -->
-      <label for="machine">Machine:</label>
-      <select id="machine" name="machine" required></select><br><br>
-
-      <!-- Text area where the user describes the fault -->
-      <label for="note">Note:</label><br>
-      <textarea id="note" name="note" required></textarea><br><br>
-
-      <!-- Input field for uploading one or more images (accepts only image files) -->
-      <label for="images">Upload images:</label><br>
-      <input type="file" id="images" name="image" multiple accept="image/*"><br><br>
-
-      <!-- Submit button: sends the fault data and images to the server using JavaScript -->
-      <button type="submit">Submit Fault</button>
-    </form>
-
-    <!-- Section showing which user is logged in, placed below the form for clarity -->
-    <div class="user-info">
-      <p class="logged-user">Logged in as: <strong>{{ request.user.username }}</strong></p>
+  <main>
+    <div class="header">
+      <h1 class="title">Machine Fault Reporting</h1>
+      <p class="subtitle">Report issues with machines for prompt maintenance and repair</p>
     </div>
 
-    <!-- Placeholder for displaying success or error messages from the form submission -->
-    <p id="result"></p>
-    <!-- Spinner (hidden by default) -->
-    <div id="loading-spinner" class="spinner" style="display: none;"></div>
+    <div class="success-message" id="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      Fault report submitted successfully! Your report ID is <strong>#FR-2345</strong>
+    </div>
 
-  </div>
+    <form id="faultForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="machine" class="form-label">Assigned Machine</label>
+        <select id="machine" class="form-control" required>
+          <!-- Opciones se cargarán con JavaScript desde /api/assigned-machines/ -->
+        </select>
+        <div class="form-text">Only your assigned machines will appear here</div>
+      </div>
 
-  <!-- Page footer -->
+      <div class="form-group">
+        <label class="form-label">Machine Location</label>
+        <select class="form-control" id="machineLocation" required>
+          <option value="" disabled selected>Select location</option>
+          <option value="production-line-1">Production Line 1</option>
+          <option value="production-line-2">Production Line 2</option>
+          <option value="assembly-area">Assembly Area</option>
+          <option value="packaging-line">Packaging Line</option>
+          <option value="warehouse">Warehouse</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fault Priority</label>
+        <div class="priority-selector">
+          <div class="priority-option priority-low">
+            <input type="radio" name="priority" id="priorityLow" class="priority-input" value="low" />
+            <label for="priorityLow" class="priority-label">
+              Low
+            </label>
+          </div>
+          <div class="priority-option priority-medium">
+            <input type="radio" name="priority" id="priorityMedium" class="priority-input" value="medium" checked />
+            <label for="priorityMedium" class="priority-label">
+              Medium
+            </label>
+          </div>
+          <div class="priority-option priority-high">
+            <input type="radio" name="priority" id="priorityHigh" class="priority-input" value="high" />
+            <label for="priorityHigh" class="priority-label">
+              High
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="faultType" class="form-label">Fault Type</label>
+        <select class="form-control" id="faultType" required>
+          <option value="" disabled selected>Select fault type</option>
+          <option value="mechanical">Mechanical Issue</option>
+          <option value="electrical">Electrical Problem</option>
+          <option value="software">Software/Control System Error</option>
+          <option value="performance">Performance Degradation</option>
+          <option value="noise">Unusual Noise</option>
+          <option value="leakage">Leakage</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="form-label">Detailed Description</label>
+        <textarea id="description" class="form-control" placeholder="Describe the issue in detail including when it started, any error messages, sounds, or behavior..." required></textarea>
+        <div class="form-text">Be as specific as possible to help troubleshooting</div>
+      </div>
+
+      <div class="file-upload">
+        <label class="file-upload-label">
+          <div class="file-upload-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <div class="file-upload-text">Drag and drop images or click to upload</div>
+          <div class="file-upload-info">JPG, PNG or PDF files (max. 10MB)</div>
+          <input type="file" id="imageUpload" accept="image/jpeg, image/png, application/pdf" />
+        </label>
+        <div class="file-preview" id="filePreview">
+          <img src="/api/placeholder/60/60" alt="preview" class="file-preview-image">
+          <div class="file-preview-details">
+            <div class="file-preview-name">fault-image.jpg</div>
+            <div class="file-preview-size">2.4 MB</div>
+          </div>
+          <button type="button" class="file-preview-remove" id="removeFile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="reportedBy" class="form-label">Reported By</label>
+        <input type="text" id="reportedBy" class="form-control" placeholder="Your name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="contactEmail" class="form-label">Contact Email</label>
+        <input type="email" id="contactEmail" class="form-control" placeholder="Your email address" required />
+        <div class="form-text">You will receive updates about this report at this email</div>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Submit Fault Report</button>
+      </div>
+    </form>
+  </main>
+
   <div id="footer">
     © 2025 MachineMonitor Dashboard | Version 2.3.1
   </div>
-  <!-- Link to the JavaScript file that handles form logic, machine loading, and image upload -->
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // File upload preview
+      const imageUpload = document.getElementById('imageUpload');
+      const filePreview = document.getElementById('filePreview');
+      const filePreviewName = document.querySelector('.file-preview-name');
+      const filePreviewSize = document.querySelector('.file-preview-size');
+      const removeFileBtn = document.getElementById('removeFile');
+      
+      imageUpload.addEventListener('change', function(e) {
+        if (this.files.length > 0) {
+          const file = this.files[0];
+          filePreviewName.textContent = file.name;
+          
+          // Format file size
+          let size = file.size;
+          let sizeText = '';
+          
+          if (size < 1024) {
+            sizeText = size + ' B';
+          } else if (size < 1024 * 1024) {
+            sizeText = (size / 1024).toFixed(1) + ' KB';
+          } else {
+            sizeText = (size / (1024 * 1024)).toFixed(1) + ' MB';
+          }
+          
+          filePreviewSize.textContent = sizeText;
+          filePreview.classList.add('active');
+          
+          // If it's an image, show preview
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              document.querySelector('.file-preview-image').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            // For non-image files, show generic icon
+            document.querySelector('.file-preview-image').src = '/api/placeholder/60/60';
+          }
+        }
+      });
+      
+      removeFileBtn.addEventListener('click', function() {
+        imageUpload.value = '';
+        filePreview.classList.remove('active');
+      });
+      
+      // Form submission
+      const faultForm = document.getElementById('faultForm');
+      const successMessage = document.getElementById('successMessage');
+      
+      faultForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Simulate form submission
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        // Simulate network delay
+        setTimeout(() => {
+          successMessage.classList.add('active');
+          submitBtn.textContent = 'Submit Fault Report';
+          submitBtn.disabled = false;
+          
+          // Scroll to top to show success message
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+          
+          // Reset form after submission
+          faultForm.reset();
+          filePreview.classList.remove('active');
+        }, 1500);
+      });
+      
+      // Cancel button
+      const cancelBtn = document.getElementById('cancelBtn');
+      cancelBtn.addEventListener('click', function() {
+        // Just reset the form for this demo
+        faultForm.reset();
+        filePreview.classList.remove('active');
+        successMessage.classList.remove('active');
+      });
+    });
+  </script>
   <script src="{% static 'myapp/fault_report.js' %}"></script>
 </body>
-
 </html>

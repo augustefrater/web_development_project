@@ -1,7 +1,5 @@
 // Run JavaScript only after the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
-
-    // Utility function to extract a named cookie (used for CSRF token)
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== "") {
@@ -18,13 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const csrfToken = getCookie("csrftoken");
-    console.log("CSRF Token:", csrfToken);
 
     // DOM references
     const machineSelect = document.getElementById("machine");
-    const form = document.getElementById("fault-form");
-    const result = document.getElementById("result");
-    const fileInput = document.getElementById("images");
+    const form = document.getElementById("faultForm");
+    const result = document.getElementById("successMessage");
+    const fileInput = document.getElementById("imageUpload");
 
     // Fetch machines assigned to the current logged-in user
     fetch("/api/assigned-machines/")
@@ -35,11 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return res.json();
         })
         .then(data => {
-            console.log("Assigned machines:", data);
-
             if (!Array.isArray(data) || data.length === 0) {
-                result.textContent = "⚠️ You have no machines assigned.";
+                result.innerHTML = "⚠️ You have no machines assigned.";
                 result.style.color = "orange";
+                result.classList.add("active");
                 machineSelect.disabled = true;
                 form.querySelector("button[type='submit']").disabled = true;
                 return;
@@ -54,21 +50,19 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => {
             console.error("❌ Error fetching assigned machines:", error);
-            result.textContent = "❌ Failed to load assigned machines. Are you logged in?";
+            result.innerHTML = "❌ Failed to load assigned machines. Are you logged in?";
             result.style.color = "red";
+            result.classList.add("active");
         });
 
-    // Handle form submission (with optional image upload)
+    // Handle form submission
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        console.log("Submitting fault report...");
-
-        const note = document.getElementById("note").value;
+        const note = document.getElementById("description").value;
         const machineId = machineSelect.value;
         const imageFile = fileInput.files[0];
 
-        // Step 1: Submit the fault case
         const faultPayload = {
             machine: machineId
         };
@@ -90,9 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const faultData = await faultResponse.json();
-            console.log("Fault case created:", faultData);
 
-            // Step 2: Create a FaultNote
             const noteResponse = await fetch("/api/fault-notes/", {
                 method: "POST",
                 headers: {
@@ -112,9 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const noteData = await noteResponse.json();
-            console.log("Fault note created:", noteData);
 
-            // Step 3: Upload the image (if provided)
             if (imageFile) {
                 const formData = new FormData();
                 formData.append("fault_note", noteData.id);
@@ -133,16 +123,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     const err = await imageResponse.json();
                     throw new Error("Image upload failed: " + JSON.stringify(err));
                 }
-
-                console.log("✅ Image uploaded successfully");
             }
 
             result.textContent = "✅ Fault report submitted!";
-            result.style.color = "green";
+            result.style.color = "#16a34a";
+            result.classList.add("active");
             form.reset();
+            document.getElementById("filePreview").classList.remove("active");
         } catch (error) {
             result.textContent = "❌ Error: " + error.message;
             result.style.color = "red";
+            result.classList.add("active");
         }
     });
 });
