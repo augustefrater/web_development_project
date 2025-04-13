@@ -1,0 +1,47 @@
+<!-- Load static files (CSS, JS, images) -->
+{% load static %}
+
+<!-- Declare the document type and set language to English -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Use UTF-8 character encoding to support all characters -->
+  <meta charset="UTF-8">
+  
+  <!-- Title of the page shown in the browser tab -->
+  <title>Upload Fault Image</title>
+
+  <!-- Link to the external CSS stylesheet for styling the page -->
+  <link rel="stylesheet" href="{% static 'myapp/image_upload.css' %}">
+</head>
+
+<body>
+  <!-- Main heading of the page -->
+  <h2>Upload an Image for a Fault Note</h2>
+
+  <!-- Form to upload the image -->
+  <form id="image-upload-form" enctype="multipart/form-data">
+    <!-- Hidden input to store the CSRF token for security -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <!-- Input field for the fault note ID (needed to associate the image with the correct note) -->
+    <label for="fault_note_id">Fault Note ID:</label>
+    <input type="number" id="fault_note_id" name="fault_note_id" required>
+
+    <!-- File input field to select the image from the user’s device -->
+    <label for="image">Image:</label>
+    <input type="file" id="image" name="image" accept="image/*" required>
+
+    <!-- Submit button to trigger the upload -->
+    <button type="submit">Upload Image</button>
+  </form>
+
+  <!-- Paragraph to display result messages (success or error) -->
+  <p id="upload-result"></p>
+
+  <!-- Link to the JavaScript file that handles the upload functionality -->
+  <script src="{% static 'myapp/image_upload.js' %}"></script>
+</body>
+
+</html>

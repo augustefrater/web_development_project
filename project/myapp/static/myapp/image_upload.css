@@ -1,0 +1,63 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* Clean, readable font */
+    background-color: #f4f7fa;  /* Soft background */
+    color: #333;  /* Neutral text color */
+    margin: 0;
+    padding: 0;
+}
+
+/* 📦 Centered container for the upload form */
+form {
+    background-color: #ffffff;  /* White background for contrast */
+    max-width: 500px;           /* Limit form width */
+    margin: 50px auto;          /* Centered horizontally and pushed down */
+    padding: 30px;              /* Padding inside the form */
+    border-radius: 12px;        /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
+}
+
+/* 🏷️ Style for all labels */
+label {
+    display: block;             /* Put each label on a new line */
+    margin-top: 15px;           /* Spacing above each label */
+    font-weight: bold;
+}
+
+/* 🧾 Input fields and file upload */
+input[type="text"],
+input[type="file"] {
+    width: 100%;                /* Full width */
+    padding: 10px;              /* Internal spacing */
+    margin-top: 5px;            /* Space between label and input */
+    border: 1px solid #ccc;     /* Light border */
+    border-radius: 6px;         /* Smooth edges */
+    font-size: 14px;
+    background-color: #fff;
+}
+
+/* 🎯 Button style */
+button {
+    display: block;
+    width: 100%;                /* Full width */
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #2a4054;  /* Primary blue tone */
+    color: white;               /* White text */
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 🖱️ Hover effect for the button */
+button:hover {
+    background-color: #3e5870;
+}
+
+/* ✅/❌ Feedback result message */
+#upload-result {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+}

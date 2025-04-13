@@ -29,7 +29,7 @@ class WarningSerializer(serializers.ModelSerializer):
 class FaultCaseSerializer(serializers.ModelSerializer):
     # Automatically associate the fault report with the logged-in user
     created_by = serializers.PrimaryKeyRelatedField(
-        read_only=True  # ✅ Don't allow client to set this manually
+        read_only=True  # Don't allow client to set this manually
     )
 
     class Meta:
@@ -40,13 +40,14 @@ class FaultCaseSerializer(serializers.ModelSerializer):
 class FaultNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FaultNote
-        fields = '__all__'
+        fields = ['id', 'fault_case', 'user', 'note_text', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at'] 
 
 # Deals with images attached to a fault note (binary data)
 class FaultNoteImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = FaultNoteImage
-        fields = '__all__'
+        fields = ['id', 'fault_note', 'image','uploaded_at']
 
 # Represents comments made on a fault case by users
 class FaultCommentSerializer(serializers.ModelSerializer):

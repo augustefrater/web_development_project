@@ -1,0 +1,103 @@
+[33mcommit 7769f931cf79c3caa45d69314ea7d4c10cc715e9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbruno[m[33m)[m
+Author: brunosagrera <bsagrera7@gmail.com>
+Date:   Sat Apr 12 21:31:47 2025 +0100
+
+    implement user-specific machine filtering and fault reporting with login support
+
+[33mcommit a5fec82e8c5f5c522146be829ff8a091e5c8e66b[m
+Author: brunosagrera <bsagrera7@gmail.com>
+Date:   Sat Apr 12 16:02:57 2025 +0100
+
+    Add fault report form with manual user input and AJAX integration
+
+[33mcommit b85694600ee56782158d62d42be3c9e36e87eed4[m
+Author: brunosagrera <bsagrera7@gmail.com>
+Date:   Sat Apr 12 14:17:01 2025 +0100
+
+    Add fault report form with fetch() and REST API integration
+
+[33mcommit bbbbf328fdf97971fcf22f3da0c05cdda16c8f7e[m[33m ([m[1;31morigin/externalAPI[m[33m, [m[1;32mmain[m[33m)[m
+Author: tingwong <tingwong0704@gmail.com>
+Date:   Fri Apr 11 10:52:29 2025 +0100
+
+    add external api -- create a warning
+
+[33mcommit 8ee9873a1edee946a96df1c0079c92e517507202[m
+Author: tingwong <tingwong0704@gmail.com>
+Date:   Thu Apr 10 22:45:49 2025 +0100
+
+    1. add media file
+    2. update dataset, migrations files
+
+[33mcommit 744b283c35b8269de00fae5bd2e3170aa56f1374[m
+Author: tingwong <tingwong0704@gmail.com>
+Date:   Thu Apr 10 22:44:15 2025 +0100
+
+    1. add media file
+    2. update dataset, migrations files
+
+[33mcommit 5c676a4ba3f0793bd21e77bc28cadab7f411a799[m
+Author: tingwong <tingwong0704@gmail.com>
+Date:   Thu Apr 10 21:10:28 2025 +0100
+
+    Store the image in the media folder
+
+[33mcommit 959922c904958f6797c5f87dd7d11357970f5a8e[m
+Author: tingwong <tingwong0704@gmail.com>
+Date:   Thu Apr 10 20:51:06 2025 +0100
+
+    change models
+
+[33mcommit b6bc7fed748a5ad7afd0fb7e9053489b73ca5e74[m
+Author: Sumit Shinde <103333387+SumitSS3@users.noreply.github.com>
+Date:   Mon Apr 7 20:53:30 2025 +0100
+
+    Update script.js
+
+[33mcommit 95a86c6c995a8e6bcb0d987b4362618c18ec7f7f[m
+Author: Sumit Shinde <103333387+SumitSS3@users.noreply.github.com>
+Date:   Sun Apr 6 21:21:31 2025 +0100
+
+    Update script.js
+
+[33mcommit 2965bfb1518cc19bda0d89dec2be5c68537b7d5c[m
+Author: Sumit Shinde <103333387+SumitSS3@users.noreply.github.com>
+Date:   Sun Apr 6 21:12:14 2025 +0100
+
+    Add files via upload
+
+[33mcommit 123a90726b859a7a297ca9c22994ce9499d12a02[m
+Author: AmalfitanoJV <jean-vincent.amalfitano@epitech.eu>
+Date:   Sat Apr 5 18:22:13 2025 +0200
+
+    MODIF: delete Question and Choice django models from the example base
+
+[33mcommit 501ae66a989f1e8866dbaaf94eb764a7c4867dba[m
+Author: AmalfitanoJV <jean-vincent.amalfitano@epitech.eu>
+Date:   Sat Apr 5 18:20:51 2025 +0200
+
+    ADD + MODIF: add Django models part and REST API part
+
+[33mcommit 7eda9951a3e91495bb6660ab28ea1ecfa622d34b[m
+Author: tingwong <tingwong0704@gmail.com>
+Date:   Tue Apr 1 08:59:46 2025 +0100
+
+    Add models
+
+[33mcommit 4f1edd31d9858af09b64a3c2e827c90a01538084[m
+Author: AmalfitanoJV <jean-vincent.amalfitano@epitech.eu>
+Date:   Sat Mar 29 14:03:40 2025 +0100
+
+    Putting the base with the example from lessons
+
+[33mcommit 70d1955b13fb2d63562b6c56e4f87c81cf1beacd[m
+Author: tingwong <tingwong0704@gmail.com>
+Date:   Sun Mar 23 20:10:48 2025 +0000
+
+    Create the MySQL database and tables.
+
+[33mcommit 6cc2e985669910da14de72e142af846821daef4a[m
+Author: augustefrater <37705097+augustefrater@users.noreply.github.com>
+Date:   Sun Mar 23 13:20:17 2025 +0100
+
+    Initial commit

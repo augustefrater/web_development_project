@@ -7,6 +7,7 @@ from .views import UserViewSet, MachineViewSet, WarningViewSet, FaultCaseViewSet
     FaultNoteImageViewSet, FaultCommentViewSet, MachineAssignmentViewSet, WarningCreateAPIView
 from .views import fault_report_page
 from .views import assigned_machines_api
+from . import views
 from django.urls import path, include
 
 router = DefaultRouter()
@@ -24,6 +25,8 @@ urlpatterns = [
     path('api/external/warnings/create/', WarningCreateAPIView.as_view(), name='api_external_warning_create'),
     path('report-fault/', fault_report_page, name='fault_report'),
     path("api/assigned-machines/", assigned_machines_api, name="assigned_machines_api"),
+    path('upload-image/', views.upload_fault_image, name='upload_image'),
+    path('upload-success/', views.upload_success, name='upload_success'),
 ]
 
 # Add this snippet to serve media files during development

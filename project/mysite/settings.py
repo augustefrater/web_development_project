@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/' # The URL prefix for accessing uploaded files via HTTP
 MEDIA_ROOT = BASE_DIR / 'media' # The absolute path on the server where files will be saved
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 

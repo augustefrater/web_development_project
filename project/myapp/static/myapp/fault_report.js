@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const machineSelect = document.getElementById("machine");
     const form = document.getElementById("fault-form");
     const result = document.getElementById("result");
+    const fileInput = document.getElementById("images");
 
     // Fetch machines assigned to the current logged-in user
     fetch("/api/assigned-machines/")
@@ -36,16 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             console.log("Assigned machines:", data);
 
-            // If user has no machines assigned
             if (!Array.isArray(data) || data.length === 0) {
                 result.textContent = "⚠️ You have no machines assigned.";
                 result.style.color = "orange";
-                machineSelect.disabled = true; // Optional: disable dropdown if empty
+                machineSelect.disabled = true;
                 form.querySelector("button[type='submit']").disabled = true;
                 return;
             }
 
-            // Populate dropdown with machines
             data.forEach(machine => {
                 const option = document.createElement("option");
                 option.value = machine.machine_id;
@@ -59,41 +58,90 @@ document.addEventListener("DOMContentLoaded", () => {
             result.style.color = "red";
         });
 
-    // Handle form submission via Fetch (AJAX)
+    // Handle form submission (with optional image upload)
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         console.log("Submitting fault report...");
 
-        const payload = {
-            machine: machineSelect.value,
-            note: document.getElementById("note").value
+        const note = document.getElementById("note").value;
+        const machineId = machineSelect.value;
+        const imageFile = fileInput.files[0];
+
+        // Step 1: Submit the fault case
+        const faultPayload = {
+            machine: machineId
         };
 
-        console.log("Payload:", payload);
-
         try {
-            const response = await fetch("/api/fault-cases/", {
+            const faultResponse = await fetch("/api/fault-cases/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": csrfToken
                 },
                 credentials: "same-origin",
-                body: JSON.stringify(payload)
+                body: JSON.stringify(faultPayload)
             });
 
-            if (response.ok) {
-                result.textContent = "✅ Fault report submitted!";
-                result.style.color = "green";
-                form.reset();
-            } else {
-                const err = await response.json();
-                result.textContent = "❌ Error: " + JSON.stringify(err);
-                result.style.color = "red";
+            if (!faultResponse.ok) {
+                const err = await faultResponse.json();
+                throw new Error("Fault report failed: " + JSON.stringify(err));
             }
+
+            const faultData = await faultResponse.json();
+            console.log("Fault case created:", faultData);
+
+            // Step 2: Create a FaultNote
+            const noteResponse = await fetch("/api/fault-notes/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    fault_case: faultData.id,
+                    note_text: note
+                })
+            });
+
+            if (!noteResponse.ok) {
+                const err = await noteResponse.json();
+                throw new Error("Creating fault note failed: " + JSON.stringify(err));
+            }
+
+            const noteData = await noteResponse.json();
+            console.log("Fault note created:", noteData);
+
+            // Step 3: Upload the image (if provided)
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append("fault_note", noteData.id);
+                formData.append("image", imageFile);
+
+                const imageResponse = await fetch("/api/fault-note-images/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    },
+                    credentials: "same-origin",
+                    body: formData
+                });
+
+                if (!imageResponse.ok) {
+                    const err = await imageResponse.json();
+                    throw new Error("Image upload failed: " + JSON.stringify(err));
+                }
+
+                console.log("✅ Image uploaded successfully");
+            }
+
+            result.textContent = "✅ Fault report submitted!";
+            result.style.color = "green";
+            form.reset();
         } catch (error) {
-            result.textContent = "❌ Request failed: " + error;
+            result.textContent = "❌ Error: " + error.message;
             result.style.color = "red";
         }
     });
