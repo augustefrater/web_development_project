@@ -78,12 +78,11 @@ class WarningCreateSerializer(serializers.Serializer):
         """
         Create and return a new `Warning` instance, given the validated data.
         """
-        machine_id = validated_data['machine_id']
+        machine = validated_data['machine_id']
         warning_text = validated_data['warning_text']
 
-
         # find the Machine object
-        machine = Machine.objects.get(machine_id=machine_id)
+        # machine = Machine.objects.get(machine_id=machine_id)
 
         try:
             system_user = User.objects.get(pk=settings.API_SYSTEM_USER_ID)
@@ -101,7 +100,6 @@ class WarningCreateSerializer(serializers.Serializer):
         if machine.status != 'Fault': # when it's not 'Fault' status
              machine.status = 'Warning'
              machine.save()
-        print("======================================")
         return warning
 
 

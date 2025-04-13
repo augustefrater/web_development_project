@@ -19,7 +19,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # external user id
-API_SYSTEM_USER_ID = 3
+API_SYSTEM_USER_ID = 1
 
 # Simple uploaded file storage
 # https://learndjango.com/tutorials/django-file-and-image-uploads-tutorial
