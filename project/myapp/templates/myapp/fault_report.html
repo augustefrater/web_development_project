@@ -66,25 +66,19 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Fault Priority</label>
+        <label class="form-label">Update Machine Status</label>
         <div class="priority-selector">
-          <div class="priority-option priority-low">
-            <input type="radio" name="priority" id="priorityLow" class="priority-input" value="low" />
-            <label for="priorityLow" class="priority-label">
-              Low
-            </label>
+          <div class="priority-option priority-ok">
+            <input type="radio" name="machineStatus" id="statusOk" class="priority-input" value="OK" checked />
+            <label for="statusOk" class="priority-label">OK</label>
           </div>
-          <div class="priority-option priority-medium">
-            <input type="radio" name="priority" id="priorityMedium" class="priority-input" value="medium" checked />
-            <label for="priorityMedium" class="priority-label">
-              Medium
-            </label>
+          <div class="priority-option priority-warning">
+            <input type="radio" name="machineStatus" id="statusWarning" class="priority-input" value="Warning" />
+            <label for="statusWarning" class="priority-label">Warning</label>
           </div>
-          <div class="priority-option priority-high">
-            <input type="radio" name="priority" id="priorityHigh" class="priority-input" value="high" />
-            <label for="priorityHigh" class="priority-label">
-              High
-            </label>
+          <div class="priority-option priority-fault">
+            <input type="radio" name="machineStatus" id="statusFault" class="priority-input" value="Fault" />
+            <label for="statusFault" class="priority-label">Fault</label>
           </div>
         </div>
       </div>
@@ -139,7 +133,13 @@
 
       <div class="form-group">
         <label for="reportedBy" class="form-label">Reported By</label>
-        <input type="text" id="reportedBy" class="form-control" placeholder="Your name" required />
+        <input
+          type="text"
+          id="reportedBy"
+          class="form-control"
+          value="{{ request.user.get_full_name|default:request.user.username }}"
+          readonly
+        />
       </div>
 
       <div class="form-group">

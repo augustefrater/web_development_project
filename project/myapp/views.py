@@ -33,7 +33,27 @@ def fault_report_page(request):
 
 @login_required
 def dashboard_page(request):
-    return render(request, 'myapp/dashboard.html')
+    # Obtener todas las máquinas
+    machines = Machine.objects.all()
+
+    # Contar estados
+    total_machines = machines.count()
+    online_count = machines.filter(status="OK").count()
+    offline_count = machines.filter(status="Warning").count()
+    maintenance_count = machines.filter(status="Fault").count()
+
+    # Obtener las 5 máquinas más recientemente actualizadas (si tienes un campo como 'last_updated')
+    latest_machines = machines.order_by('-machine_id')[:5]
+
+    context = {
+        "total_machines": total_machines,
+        "online_count": online_count,
+        "offline_count": offline_count,
+        "maintenance_count": maintenance_count,
+        "latest_machines": latest_machines,
+    }
+
+    return render(request, 'myapp/dashboard.html', context)
 
 # Upload success page
 def upload_success(request):

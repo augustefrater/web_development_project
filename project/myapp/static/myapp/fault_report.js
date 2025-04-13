@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const csrfToken = getCookie("csrftoken");
 
-    // DOM references
     const machineSelect = document.getElementById("machine");
     const form = document.getElementById("faultForm");
     const result = document.getElementById("successMessage");
@@ -26,9 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch machines assigned to the current logged-in user
     fetch("/api/assigned-machines/")
         .then(res => {
-            if (!res.ok) {
-                throw new Error("Not authenticated or error fetching assigned machines.");
-            }
+            if (!res.ok) throw new Error("Not authenticated or error fetching assigned machines.");
             return res.json();
         })
         .then(data => {
@@ -62,10 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const note = document.getElementById("description").value;
         const machineId = machineSelect.value;
         const imageFile = fileInput.files[0];
-
-        const faultPayload = {
-            machine: machineId
-        };
+        const newStatus = document.querySelector('input[name="machineStatus"]:checked').value;
+        const reportedBy = document.getElementById("reportedBy").value;
+        const faultPayload = { machine: machineId };
 
         try {
             const faultResponse = await fetch("/api/fault-cases/", {
@@ -124,6 +120,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     throw new Error("Image upload failed: " + JSON.stringify(err));
                 }
             }
+
+            // ✅ Update machine status
+            await fetch(`/api/machines/${machineId}/`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({ status: newStatus })
+            });
 
             result.textContent = "✅ Fault report submitted!";
             result.style.color = "#16a34a";

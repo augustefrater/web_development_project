@@ -17,7 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
 class MachineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Machine
-        fields = '__all__'  # Include all fields from the Machine model
+        fields = ['name', 'status', 'machine_id']
+        read_only_fields = ['machine_id']
 
 # Handles warnings related to machines
 class WarningSerializer(serializers.ModelSerializer):

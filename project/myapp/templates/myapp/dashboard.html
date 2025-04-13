@@ -51,20 +51,16 @@
     <!-- Key metrics shown in cards -->
     <div class="dashboard-grid">
       <div class="card">
-        <h3 class="card-title">Total Machines</h3>
-        <div class="card-value">48</div>
+        <h3 class="card-title">OK</h3>
+        <div class="card-value" style="color: #4ade80;">{{ online_count }}</div>
       </div>
       <div class="card">
-        <h3 class="card-title">Online</h3>
-        <div class="card-value" style="color: #4ade80;">36</div>
+        <h3 class="card-title">Warning</h3>
+        <div class="card-value" style="color: #f87171;">{{ offline_count }}</div>
       </div>
       <div class="card">
-        <h3 class="card-title">Offline</h3>
-        <div class="card-value" style="color: #f87171;">5</div>
-      </div>
-      <div class="card">
-        <h3 class="card-title">Maintenance</h3>
-        <div class="card-value" style="color: #facc15;">7</div>
+        <h3 class="card-title">Fault</h3>
+        <div class="card-value" style="color: #facc15;">{{ maintenance_count }}</div>
       </div>
     </div>
 
@@ -93,51 +89,18 @@
 
     <!-- List of machines with status and details -->
     <div id="machineList">
-      <div class="machine-item">
-        <div class="machine-status status-online"></div>
-        <div class="machine-info">
-          <div class="machine-name">Machine A-101</div>
-          <div class="machine-details">Production Line 1 • Last update: 5 min ago</div>
+      {% for machine in latest_machines %}
+        <div class="machine-item">
+          <div class="machine-status status-{{ machine.status }}"></div>
+          <div class="machine-info">
+            <div class="machine-name">{{ machine.name }}</div>
+            <div class="machine-details">Location: {{ machine.location }} • ID: {{ machine.machine_id }}</div>
+          </div>
+          <div class="machine-action">View Details</div>
         </div>
-        <div class="machine-action">View Details</div>
-      </div>
-
-      <!-- Additional machine entries... -->
-      <div class="machine-item">
-        <div class="machine-status status-online"></div>
-        <div class="machine-info">
-          <div class="machine-name">Machine B-205</div>
-          <div class="machine-details">Production Line 2 • Last update: 3 min ago</div>
-        </div>
-        <div class="machine-action">View Details</div>
-      </div>
-
-      <div class="machine-item">
-        <div class="machine-status status-maintenance"></div>
-        <div class="machine-info">
-          <div class="machine-name">Machine C-310</div>
-          <div class="machine-details">Packaging Line • Last update: 20 min ago</div>
-        </div>
-        <div class="machine-action">View Details</div>
-      </div>
-
-      <div class="machine-item">
-        <div class="machine-status status-offline"></div>
-        <div class="machine-info">
-          <div class="machine-name">Machine D-423</div>
-          <div class="machine-details">Assembly Line • Last update: 45 min ago</div>
-        </div>
-        <div class="machine-action">View Details</div>
-      </div>
-
-      <div class="machine-item">
-        <div class="machine-status status-online"></div>
-        <div class="machine-info">
-          <div class="machine-name">Machine A-102</div>
-          <div class="machine-details">Production Line 1 • Last update: 12 min ago</div>
-        </div>
-        <div class="machine-action">View Details</div>
-      </div>
+      {% empty %}
+        <p>No recent machine updates.</p>
+      {% endfor %}
     </div>
   </main>
 
